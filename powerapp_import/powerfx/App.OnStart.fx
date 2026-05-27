@@ -1,0 +1,23 @@
+Set(
+    gblExcelFiles,
+    Table(
+        {
+            Name: "",
+            Id: "",
+            IsSelected: false,
+            Modified: Now()
+        }
+    )
+);
+Set(gblResult, "");
+Set(gblStatus, "待機中");
+Set(
+    gblHistory,
+    Table(
+        {DateTime: "", Location: "", Project: "", Status: ""}
+    )
+);
+If(
+    !IsBlank(SavedHistory),
+    Set(gblHistory, SavedHistory)
+)
