@@ -38,11 +38,11 @@ With(
                 )
             );
             Notify("集計が完了しました", NotificationType.Success);
-            Set(LblStatus.Text, "処理完了：" & Text(Now(), "yyyy/mm/dd hh:mm"));
+            Set(LblStatus.Text, "処理完了：" & Text(Now(), "yyyy/MM/dd HH:mm"));
             Collect(
                 gblHistory,
                 {
-                    DateTime: Text(Now(), "yyyy/mm/dd hh:mm"),
+                    DateTime: Text(Now(), "yyyy/MM/dd HH:mm"),
                     Location: loc,
                     Project: prj,
                     Status: "成功"
