@@ -30,6 +30,7 @@
 - `BtnExecute.OnSelect.fx`
 - `BtnClear.OnSelect.fx`
 - `BtnOpenOutput.OnSelect.fx`
+- `LblStatus.Text.fx`（先绑定到 `gblStatus` 变量）
 
 > 注意：`BtnOpenOutput.OnSelect.fx` 中的 SharePoint URL 需要替换成你自己的站点地址。
 

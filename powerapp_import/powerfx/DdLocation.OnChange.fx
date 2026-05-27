@@ -10,6 +10,6 @@ Set(
 );
 UpdateContext({locLoading: false});
 Set(
-    LblStatus.Text,
+    gblStatus,
     DdLocation.Selected.Value & " のファイル一覧を取得しました（" & CountRows(gblExcelFiles) & "件）"
 )

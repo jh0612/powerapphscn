@@ -11,4 +11,4 @@ ForAll(
     Patch(gblExcelFiles, file, {IsSelected: false})
 );
 Set(gblResult, "");
-Set(LblStatus.Text, "リセットしました")
+Set(gblStatus, "リセットしました")

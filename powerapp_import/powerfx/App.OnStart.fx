@@ -10,6 +10,7 @@ Set(
     )
 );
 Set(gblResult, "");
+Set(gblStatus, "待機中");
 Set(
     gblHistory,
     Table(

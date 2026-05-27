@@ -1,5 +1,5 @@
 UpdateContext({locProcessing: true});
-Set(LblStatus.Text, "処理中...");
+Set(gblStatus, "処理中...");
 
 With(
     {
@@ -16,7 +16,7 @@ With(
     If(
         IsBlank(selectedIds),
         Notify("ファイルを1件以上選択してください", NotificationType.Warning);
-        Set(LblStatus.Text, "ファイルが選択されていません"),
+        Set(gblStatus, "ファイルが選択されていません"),
         If(
             Confirm(
                 "【実行確認】" & Char(10) &
@@ -38,7 +38,7 @@ With(
                 )
             );
             Notify("集計が完了しました", NotificationType.Success);
-            Set(LblStatus.Text, "処理完了：" & Text(Now(), "yyyy/MM/dd HH:mm"));
+            Set(gblStatus, "処理完了：" & Text(Now(), "yyyy/MM/dd HH:mm"));
             Collect(
                 gblHistory,
                 {
@@ -49,7 +49,7 @@ With(
                 }
             );
             SaveData(gblHistory, "SavedHistory"),
-            Set(LblStatus.Text, "キャンセルされました")
+            Set(gblStatus, "キャンセルされました")
         )
     )
 );
