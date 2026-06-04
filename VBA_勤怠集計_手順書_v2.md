@@ -1218,7 +1218,7 @@ End Function
 Public Function GetExcelFiles(ByVal folderPath As String) As Variant
     Dim normalizedPath As String
     normalizedPath = Trim(folderPath)
-    If Len(normalizedPath) > 0 And Right$(normalizedPath, 1) = "\" Then
+    If Len(normalizedPath) > 0 And (Right$(normalizedPath, 1) = "\" Or Right$(normalizedPath, 1) = "/") Then
         normalizedPath = Left$(normalizedPath, Len(normalizedPath) - 1)
     End If
     
@@ -1239,7 +1239,7 @@ Public Function GetExcelFiles(ByVal folderPath As String) As Variant
     Dim fileObj As Object
     For Each fileObj In folderObj.Files
         Dim ext As String
-        ext = LCase$(fso.GetExtensionName(CStr(fileObj.Name)))
+        ext = LCase$(fso.GetExtensionName(fileObj.Name))
         
         Select Case ext
             Case "xls", "xlsx", "xlsm"
@@ -2279,15 +2279,18 @@ Private Sub RefreshFileList()
     Dim hasFiles As Boolean
     hasFiles = False
     If IsArray(files) Then
+        Dim boundsErr As Long
         Err.Clear
         On Error Resume Next
         lb = LBound(files)
         ub = UBound(files)
-        If Err.Number = 0 Then
+        boundsErr = Err.Number
+        On Error GoTo 0
+        
+        If boundsErr = 0 Then
             hasFiles = (ub >= lb)
         End If
     End If
-    On Error GoTo 0
     If Not hasFiles Then
         chkSelectAll.Value = False
         Call UpdateCount
@@ -2295,7 +2298,7 @@ Private Sub RefreshFileList()
     End If
     
     Dim fso As Object
-    ' ループ内で使い回し、毎回生成しないことで処理を安定化
+    ' ループ内で使い回し、毎回生成しないことで無駄なオブジェクト生成を避ける
     Set fso = CreateObject("Scripting.FileSystemObject")
     
     ' 担当者フィルター
@@ -2332,6 +2335,7 @@ Private Sub RefreshFileList()
         
         ' ファイル情報を取得
         If Not fso.FileExists(filePath) Then
+            Debug.Print "Skip missing file: " & filePath
             GoTo SkipFile
         End If
         
