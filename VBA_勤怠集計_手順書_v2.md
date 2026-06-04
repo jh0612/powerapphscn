@@ -1213,34 +1213,53 @@ Public Function BrowseFolder(Optional ByVal title As String = "フォルダを�
     End With
 End Function
 
-''' 指定フォルダ内のExcelファイル一覧を取得する
+''' 指定フォルダ内のExcelファイル一覧（xls/xlsx/xlsm）を取得する
 ''' 戻り値：ファイルパスの配列
 Public Function GetExcelFiles(ByVal folderPath As String) As Variant
-    If Len(Dir(folderPath, vbDirectory)) = 0 Then
+    Dim normalizedPath As String
+    normalizedPath = Trim(folderPath)
+    If Len(normalizedPath) > 0 And (Right$(normalizedPath, 1) = "\" Or Right$(normalizedPath, 1) = "/") Then
+        normalizedPath = Left$(normalizedPath, Len(normalizedPath) - 1)
+    End If
+    
+    Dim fso As Object
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    
+    If Not fso.FolderExists(normalizedPath) Then
         GetExcelFiles = Array()
         Exit Function
     End If
     
-    Dim fileList As Object
-    Set fileList = CreateObject("System.Collections.ArrayList")
+    Dim fileList As Collection
+    Set fileList = New Collection
     
-    Dim fileName As String
-    fileName = Dir(folderPath & "\*.xlsx")
-    Do While fileName <> ""
-        fileList.Add folderPath & "\" & fileName
-        fileName = Dir()
-    Loop
+    Dim folderObj As Object
+    Set folderObj = fso.GetFolder(normalizedPath)
     
-    fileName = Dir(folderPath & "\*.xls")
-    Do While fileName <> ""
-        fileList.Add folderPath & "\" & fileName
-        fileName = Dir()
-    Loop
+    Dim fileObj As Object
+    For Each fileObj In folderObj.Files
+        Dim ext As String
+        ext = LCase$(fso.GetExtensionName(fileObj.Name))
+        
+        Select Case ext
+            Case "xls", "xlsx", "xlsm"
+                ' Dir 関数では環境依存で文字化けすることがあるため、
+                ' Unicode を保持できる FSO の Path をそのまま保持する
+                fileList.Add CStr(fileObj.Path)
+        End Select
+    Next fileObj
     
     If fileList.Count = 0 Then
         GetExcelFiles = Array()
     Else
-        GetExcelFiles = fileList.ToArray()
+        ' Collection を配列に変換
+        Dim resultArray() As String
+        ReDim resultArray(0 To fileList.Count - 1)
+        Dim idx As Long
+        For idx = 1 To fileList.Count
+            resultArray(idx - 1) = fileList(idx)
+        Next idx
+        GetExcelFiles = resultArray
     End If
 End Function
 
@@ -1594,8 +1613,11 @@ End Function
 
 ''' ファイル名から期間フィルターに合致するか簡易判定
 Private Function IsFileInPeriod(ByVal filePath As String, ByVal period As String) As Boolean
+    Dim fso As Object
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    
     Dim fileName As String
-    fileName = Dir(filePath)
+    fileName = CStr(fso.GetFileName(filePath))
     
     ' 期間文字列（例：2026/4）がファイル名に含まれるか
     ' 例：period = "2026/4" → ファイル名に "202604" または "2026_04" など
@@ -2086,8 +2108,8 @@ End Sub
 
 Private Sub btnExecute_Click()
     ' 選択ファイルの収集
-    Dim selectedFiles As Object
-    Set selectedFiles = CreateObject("System.Collections.ArrayList")
+    Dim selectedFiles As Collection
+    Set selectedFiles = New Collection
     
     Dim i As Long
     For i = 0 To lstFiles.ListCount - 1
@@ -2124,8 +2146,8 @@ Private Sub btnExecute_Click()
     
     Dim filePaths() As String
     ReDim filePaths(0 To selectedFiles.Count - 1)
-    For i = 0 To selectedFiles.Count - 1
-        filePaths(i) = CStr(selectedFiles(i))
+    For i = 1 To selectedFiles.Count
+        filePaths(i - 1) = CStr(selectedFiles(i))
     Next i
     
     Dim success As Boolean
@@ -2260,6 +2282,32 @@ Private Sub RefreshFileList()
     Dim files As Variant
     files = GetExcelFiles(folderPath)
     
+    Dim lb As Long, ub As Long
+    Dim hasFiles As Boolean
+    hasFiles = False
+    If IsArray(files) Then
+        Dim boundsErr As Long
+        Err.Clear
+        On Error Resume Next
+        lb = LBound(files)
+        ub = UBound(files)
+        boundsErr = Err.Number
+        On Error GoTo 0
+        
+        If boundsErr = 0 Then
+            hasFiles = (ub >= lb)
+        End If
+    End If
+    If Not hasFiles Then
+        chkSelectAll.Value = False
+        Call UpdateCount
+        Exit Sub
+    End If
+    
+    Dim fso As Object
+    ' ループ内で使い回し、毎回生成しないことで無駄なオブジェクト生成を避ける
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    
     ' 担当者フィルター
     Dim filterPerson As String
     filterPerson = ""
@@ -2276,7 +2324,7 @@ Private Sub RefreshFileList()
         Dim filePath As String
         filePath = CStr(files(i))
         Dim fileName As String
-        fileName = Dir(filePath)
+        fileName = CStr(fso.GetFileName(filePath))
         
         ' 担当者フィルター（ファイル名に担当者名が含まれるか）
         If Len(filterPerson) > 0 Then
@@ -2293,8 +2341,10 @@ Private Sub RefreshFileList()
         End If
         
         ' ファイル情報を取得
-        Dim fso As Object
-        Set fso = CreateObject("Scripting.FileSystemObject")
+        If Not fso.FileExists(filePath) Then
+            Debug.Print "Skip missing file: " & filePath
+            GoTo SkipFile
+        End If
         
         Dim fileObj As Object
         Set fileObj = fso.GetFile(filePath)
@@ -2370,6 +2420,8 @@ Private Sub UserForm_Terminate()
     End If
 End Sub
 ```
+
+> 補足：`RefreshFileList` / `GetExcelFiles` は `Dir` 依存をやめ、`Scripting.FileSystemObject` の `Path` / `GetFileName` / `GetFile` を利用することで、中文・日本語・英語を含むフォルダパス／ファイル名を同一ロジックで扱えるようにしています。
 
 ---
 
