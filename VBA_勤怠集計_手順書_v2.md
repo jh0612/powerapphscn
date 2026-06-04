@@ -1252,7 +1252,14 @@ Public Function GetExcelFiles(ByVal folderPath As String) As Variant
     If fileList.Count = 0 Then
         GetExcelFiles = Array()
     Else
-        GetExcelFiles = fileList.ToArray()
+        ' Collection を配列に変換
+        Dim resultArray() As String
+        ReDim resultArray(0 To fileList.Count - 1)
+        Dim idx As Long
+        For idx = 1 To fileList.Count
+            resultArray(idx - 1) = fileList(idx)
+        Next idx
+        GetExcelFiles = resultArray
     End If
 End Function
 
@@ -2139,8 +2146,8 @@ Private Sub btnExecute_Click()
     
     Dim filePaths() As String
     ReDim filePaths(0 To selectedFiles.Count - 1)
-    For i = 0 To selectedFiles.Count - 1
-        filePaths(i) = CStr(selectedFiles(i))
+    For i = 1 To selectedFiles.Count
+        filePaths(i - 1) = CStr(selectedFiles(i))
     Next i
     
     Dim success As Boolean
