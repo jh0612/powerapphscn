@@ -1230,8 +1230,8 @@ Public Function GetExcelFiles(ByVal folderPath As String) As Variant
         Exit Function
     End If
     
-    Dim fileList As Object
-    Set fileList = CreateObject("System.Collections.ArrayList")
+    Dim fileList As Collection
+    Set fileList = New Collection
     
     Dim folderObj As Object
     Set folderObj = fso.GetFolder(normalizedPath)
@@ -2101,8 +2101,8 @@ End Sub
 
 Private Sub btnExecute_Click()
     ' 選択ファイルの収集
-    Dim selectedFiles As Object
-    Set selectedFiles = CreateObject("System.Collections.ArrayList")
+    Dim selectedFiles As Collection
+    Set selectedFiles = New Collection
     
     Dim i As Long
     For i = 0 To lstFiles.ListCount - 1
