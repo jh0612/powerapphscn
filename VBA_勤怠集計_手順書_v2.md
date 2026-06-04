@@ -1213,7 +1213,7 @@ Public Function BrowseFolder(Optional ByVal title As String = "フォルダを�
     End With
 End Function
 
-''' 指定フォルダ内のExcelファイル一覧を取得する
+''' 指定フォルダ内のExcelファイル一覧（xls/xlsx/xlsm）を取得する
 ''' 戻り値：ファイルパスの配列
 Public Function GetExcelFiles(ByVal folderPath As String) As Variant
     Dim normalizedPath As String
@@ -2275,9 +2275,18 @@ Private Sub RefreshFileList()
     Dim files As Variant
     files = GetExcelFiles(folderPath)
     
+    Dim lb As Long, ub As Long
     Dim hasFiles As Boolean
-    On Error Resume Next
-    hasFiles = (UBound(files) >= LBound(files))
+    hasFiles = False
+    If IsArray(files) Then
+        Err.Clear
+        On Error Resume Next
+        lb = LBound(files)
+        ub = UBound(files)
+        If Err.Number = 0 Then
+            hasFiles = (ub >= lb)
+        End If
+    End If
     On Error GoTo 0
     If Not hasFiles Then
         chkSelectAll.Value = False
@@ -2286,6 +2295,7 @@ Private Sub RefreshFileList()
     End If
     
     Dim fso As Object
+    ' ループ内で使い回し、毎回生成しないことで処理を安定化
     Set fso = CreateObject("Scripting.FileSystemObject")
     
     ' 担当者フィルター
