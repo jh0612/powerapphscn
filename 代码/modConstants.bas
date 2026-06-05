@@ -75,3 +75,8 @@ Public Const COL_MAN_MONTH As Long = 6        ' 人月
 Public Const COL_UNIT_PRICE As Long = 7       ' 契約単価
 Public Const COL_COMPANY As Long = 8          ' 会社名
 Public Const COL_DAILY_DATA As Long = 9       ' 日別データ（Dictionary）
+Public Const COL_WEEKDAY_OT As Long = 10      ' 平日残業時間（合計）
+Public Const COL_WEEKEND_OT As Long = 11      ' 休日残業時間（合計）
+
+' --- 案件名設定キー（明細書・発注書のフォールバック用） ---
+Public Const SET_CASE_NAME As String = "CaseName"  ' 案件名

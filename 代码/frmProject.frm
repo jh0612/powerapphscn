@@ -54,6 +54,10 @@ Private Sub UserForm_Initialize()
     txtCompanyPath.Text = GetSetting(SET_COMPANY_PATH)
     txtOrderPath.Text = GetSetting(SET_ORDER_PATH)
     txtOutputPath.Text = GetSetting(SET_OUTPUT_PATH)
+    ' 案件名のロード（txtCaseName コントロールが存在する場合）
+    On Error Resume Next
+    txtCaseName.Text = GetSetting(SET_CASE_NAME)
+    On Error GoTo 0
 End Sub
 
 Private Sub btnHSCNBrowse_Click()
@@ -90,6 +94,10 @@ Private Sub btnSaveProject_Click()
     SaveSetting SET_COMPANY_PATH, txtCompanyPath.Text
     SaveSetting SET_ORDER_PATH, txtOrderPath.Text
     SaveSetting SET_OUTPUT_PATH, txtOutputPath.Text
+    ' 案件名の保存（txtCaseName コントロールが存在する場合）
+    On Error Resume Next
+    SaveSetting SET_CASE_NAME, txtCaseName.Text
+    On Error GoTo 0
     ThisWorkbook.Save
     Unload Me
 End Sub

@@ -2,62 +2,62 @@ Attribute VB_Name = "modMain"
 Option Explicit
 
 '==================================================
-' ƒƒCƒ“ˆ—ƒ‚ƒWƒ…[ƒ‹
-' ‹Î‘ÓWŒv‚ÌƒRƒAƒƒWƒbƒN‚Æ¿‹‘¶¬ˆ—
+' ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½[ï¿½ï¿½
+' ï¿½Î‘ÓWï¿½vï¿½ÌƒRï¿½Aï¿½ï¿½ï¿½Wï¿½bï¿½Nï¿½Æï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 '==================================================
 
-' WŒvŒ‹‰Ê‚ğ•Û‚·‚éƒ‚ƒWƒ…[ƒ‹ƒŒƒxƒ‹•Ï”
-Private m_summaryData As Object  ' Dictionary: Key=³‹K‰»–¼, Value=WŒvŒ‹‰Ê”z—ñ
+' ï¿½Wï¿½vï¿½ï¿½ï¿½Ê‚ï¿½Ûï¿½ï¿½ï¿½ï¿½éƒ‚ï¿½Wï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½xï¿½ï¿½ï¿½Ïï¿½
+Private m_summaryData As Object  ' Dictionary: Key=ï¿½ï¿½ï¿½Kï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, Value=ï¿½Wï¿½vï¿½ï¿½ï¿½Ê”zï¿½ï¿½
 
 '--------------------------------------------------
-' ŒöŠJƒvƒƒpƒeƒBFWŒvŒ‹‰Ê
+' ï¿½ï¿½ï¿½Jï¿½vï¿½ï¿½ï¿½pï¿½eï¿½Bï¿½Fï¿½Wï¿½vï¿½ï¿½ï¿½ï¿½
 '--------------------------------------------------
 
-''' WŒvŒ‹‰Ê‚ğ•Ô‚·
+''' ï¿½Wï¿½vï¿½ï¿½ï¿½Ê‚ï¿½Ô‚ï¿½
 Public Property Get SummaryData() As Object
     Set SummaryData = m_summaryData
 End Property
 
-''' WŒvŒ‹‰Ê‚ª‚ ‚é‚©
+''' ï¿½Wï¿½vï¿½ï¿½ï¿½Ê‚ï¿½ï¿½ï¿½ï¿½é‚©
 Public Property Get HasSummaryData() As Boolean
     HasSummaryData = Not (m_summaryData Is Nothing)
 End Property
 
 '--------------------------------------------------
-' ‹Î‘ÓWŒv ƒƒCƒ“ˆ—
+' ï¿½Î‘ÓWï¿½v ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 '--------------------------------------------------
 
-''' ‘I‘ğ‚³‚ê‚½‹Î‘Óƒtƒ@ƒCƒ‹‚ğWŒv‚·‚é
-''' filePathsFWŒv‘ÎÛ‚ÌExcelƒtƒ@ƒCƒ‹ƒpƒX”z—ñ
-''' locationF‹’“_–¼i–k‹/‘å˜A/‰Í“ìj
-''' periodFilterF‹Æ–±ŠúŠÔƒtƒBƒ‹ƒ^[i‹ó•¶š‚Ìê‡‚Í‘SŠúŠÔj
-''' –ß‚è’lFWŒv¬Œ÷‚È‚ç True
+''' ï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½ê‚½ï¿½Î‘Óƒtï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½Wï¿½vï¿½ï¿½ï¿½ï¿½
+''' filePathsï¿½Fï¿½Wï¿½vï¿½ÎÛ‚ï¿½Excelï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½pï¿½Xï¿½zï¿½ï¿½
+''' locationï¿½Fï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½iï¿½kï¿½ï¿½/ï¿½ï¿½A/ï¿½Í“ï¿½j
+''' periodFilterï¿½Fï¿½Æ–ï¿½ï¿½ï¿½ï¿½Ôƒtï¿½Bï¿½ï¿½ï¿½^ï¿½[ï¿½iï¿½ó•¶ï¿½ï¿½Ìê‡ï¿½Í‘Sï¿½ï¿½ï¿½Ôj
+''' ï¿½ß‚ï¿½lï¿½Fï¿½Wï¿½vï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½ True
 Public Function ExecuteAggregation(ByVal filePaths As Variant, _
                                     ByVal location As String, _
                                     ByVal periodFilter As String) As Boolean
     On Error GoTo ErrHandler
     
-    ' WŒvƒf[ƒ^‚Ì‰Šú‰»
+    ' ï¿½Wï¿½vï¿½fï¿½[ï¿½^ï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½
     Set m_summaryData = CreateObject("Scripting.Dictionary")
     
-    ' ’P‰¿•\‚ğ“Ç‚İ‚Ş
+    ' ï¿½Pï¿½ï¿½ï¿½\ï¿½ï¿½Ç‚İï¿½ï¿½ï¿½
     Dim priceDict As Object
     Set priceDict = LoadPriceTable()
     
-    ' Šeƒtƒ@ƒCƒ‹‚ğˆ—
+    ' ï¿½eï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     Dim i As Long
     For i = LBound(filePaths) To UBound(filePaths)
         Dim filePath As String
         filePath = CStr(filePaths(i))
         
-        ' ŠúŠÔƒtƒBƒ‹ƒ^[‚ª‚ ‚ê‚ÎAƒtƒ@ƒCƒ‹–¼‚ÅŠÈˆÕƒtƒBƒ‹ƒ^ƒŠƒ“ƒO
+        ' ï¿½ï¿½ï¿½Ôƒtï¿½Bï¿½ï¿½ï¿½^ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎAï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ÅŠÈˆÕƒtï¿½Bï¿½ï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½O
         'If Len(periodFilter) > 0 Then
             'If Not IsFileInPeriod(filePath, periodFilter) Then
                 'GoTo NextFile
             'End If
         'End If
         
-        ' ‹Î‘Óƒtƒ@ƒCƒ‹‚ğ“Ç‚İæ‚è
+        ' ï¿½Î‘Óƒtï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½Ç‚İï¿½ï¿½
         Call ProcessAttendanceFile(filePath, location, priceDict)
         
 NextFile:
@@ -71,7 +71,7 @@ ErrHandler:
     ExecuteAggregation = False
 End Function
 
-''' ’P‰¿•\‚ğ“Ç‚İ‚İA³‹K‰»–¼ ¨ ’P‰¿î•ñ ‚Ì«‘‚ğ•Ô‚·
+''' ï¿½Pï¿½ï¿½ï¿½\ï¿½ï¿½Ç‚İï¿½ï¿½İAï¿½ï¿½ï¿½Kï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Pï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½
 Private Function LoadPriceTable() As Object
     Dim result As Object
     Set result = CreateObject("Scripting.Dictionary")
@@ -96,7 +96,7 @@ Private Function LoadPriceTable() As Object
         Exit Function
     End If
     
-    ' ’P‰¿•\‚ğ“Ç‚İæ‚èê—p‚ÅŠJ‚­
+    ' ï¿½Pï¿½ï¿½ï¿½\ï¿½ï¿½Ç‚İï¿½ï¿½ï¿½pï¿½ÅŠJï¿½ï¿½
     Dim wb As Workbook
     Application.ScreenUpdating = False
     Set wb = Workbooks.Open(filePath, ReadOnly:=True)
@@ -119,9 +119,9 @@ Private Function LoadPriceTable() As Object
             normName = NormalizeName(rawName)
             
             Dim priceInfo(0 To 2) As Variant
-            priceInfo(0) = rawName  ' Œ³‚Ì–¼
-            priceInfo(1) = ws.Cells(r, unitCol).value  ' Œ_–ñ’P‰¿
-            priceInfo(2) = ws.Cells(r, endCol).value   ' ‘ŞĞ“ú
+            priceInfo(0) = rawName  ' ï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½
+            priceInfo(1) = ws.Cells(r, unitCol).value  ' ï¿½_ï¿½ï¿½Pï¿½ï¿½
+            priceInfo(2) = ws.Cells(r, endCol).value   ' ï¿½ŞĞ“ï¿½
             
             If Not result.Exists(normName) Then
                 result.Add normName, priceInfo
@@ -135,14 +135,14 @@ Private Function LoadPriceTable() As Object
     Set LoadPriceTable = result
 End Function
 
-''' 1‚Â‚Ì‹Î‘Óƒtƒ@ƒCƒ‹‚ğˆ—‚·‚é
-' 1‚Â‚Ì‹Î‘Óƒtƒ@ƒCƒ‹‚ğˆ—‚·‚é
+''' 1ï¿½Â‚Ì‹Î‘Óƒtï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+' 1ï¿½Â‚Ì‹Î‘Óƒtï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Private Sub ProcessAttendanceFile(ByVal filePath As String, _
                                    ByVal location As String, _
                                    ByVal priceDict As Object)
     On Error GoTo ErrorHandler
     
-    ' ƒtƒ@ƒCƒ‹‚Ì‘¶İŠm”F
+    ' ï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½Ì‘ï¿½ï¿½İŠmï¿½F
     Dim fso As Object
     Set fso = CreateObject("Scripting.FileSystemObject")
     
@@ -154,13 +154,13 @@ Private Sub ProcessAttendanceFile(ByVal filePath As String, _
     Dim wb As Workbook
     Application.ScreenUpdating = False
     
-    ' Unicodeƒtƒ@ƒCƒ‹–¼‚É‘Î‰‚·‚é‚½‚ßAFSOŒo—R‚Åƒtƒ@ƒCƒ‹‚ğŠJ‚­
+    ' Unicodeï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½É‘Î‰ï¿½ï¿½ï¿½ï¿½é‚½ï¿½ßAFSOï¿½oï¿½Rï¿½Åƒtï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½Jï¿½ï¿½
     Set wb = Workbooks.Open(filePath, ReadOnly:=True, UpdateLinks:=False)
     
     Dim ws As Worksheet
     Set ws = wb.Worksheets(1)
     
-    ' ‹’“_•Ê‚ÉƒtƒH[ƒ}ƒbƒg‚ªˆÙ‚È‚é‚½‚ßA‹’“_‚É‰‚¶‚½“Ç‚İæ‚è‚ğs‚¤
+    ' ï¿½ï¿½ï¿½_ï¿½Ê‚Éƒtï¿½Hï¿½[ï¿½}ï¿½bï¿½gï¿½ï¿½ï¿½Ù‚È‚é‚½ï¿½ßAï¿½ï¿½ï¿½_ï¿½É‰ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç‚İï¿½ï¿½ï¿½ï¿½sï¿½ï¿½
     Select Case location
         Case LOCATION_BEIJING
             Call ParseBeijingFormat(filePath, ws, priceDict)
@@ -169,7 +169,7 @@ Private Sub ProcessAttendanceFile(ByVal filePath As String, _
         Case LOCATION_HENAN
             Call ParseHenanFormat(filePath, ws, priceDict)
         Case Else
-            ' ƒfƒtƒHƒ‹ƒgF–k‹Œ`®‚Æ‚µ‚Äˆ—
+            ' ï¿½fï¿½tï¿½Hï¿½ï¿½ï¿½gï¿½Fï¿½kï¿½ï¿½ï¿½`ï¿½ï¿½ï¿½Æ‚ï¿½ï¿½Äï¿½ï¿½ï¿½
             Call ParseBeijingFormat(filePath, ws, priceDict)
     End Select
     
@@ -188,223 +188,205 @@ ErrorHandler:
 End Sub
 
 '--------------------------------------------------
-' ‹’“_•ÊƒtƒH[ƒ}ƒbƒg‰ğÍ
+' ï¿½ï¿½ï¿½_ï¿½Êƒtï¿½Hï¿½[ï¿½}ï¿½bï¿½gï¿½ï¿½ï¿½
 '--------------------------------------------------
 
-''' –k‹‹’“_‚Ì‹Î‘ÓƒtƒH[ƒ}ƒbƒg‚ğ‰ğÍ
-''' ‘z’èƒŒƒCƒAƒEƒgF
-'''   Row 1Fƒwƒbƒ_[i‰ïĞ–¼‚È‚Çj
-'''   Row 2F“ú•Êƒf[ƒ^
+''' ï¿½kï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½Ì‹Î‘Óƒtï¿½Hï¿½[ï¿½}ï¿½bï¿½gï¿½ï¿½ï¿½ï¿½ï¿½
+''' ï¿½zï¿½èƒŒï¿½Cï¿½Aï¿½Eï¿½gï¿½F
+'''   Row 1ï¿½Fï¿½wï¿½bï¿½_ï¿½[ï¿½iï¿½ï¿½Ğ–ï¿½ï¿½È‚Çj
+'''   Row 2ï¿½Fï¿½ï¿½ï¿½Êƒfï¿½[ï¿½^
 Private Sub ParseBeijingFormat(ByVal filePath As String, ByVal ws As Worksheet, ByVal priceDict As Object)
-    ' ŠÈˆÕÀ‘•F‘SƒZƒ‹‚ğƒXƒLƒƒƒ“‚µ‚Ä–¼s‚Æ“ú•ts‚ğŒŸo
-    
-    Dim companyName As String
+    ' Column layout (A onward): éƒ¨é—¨, å·¥å·, å§“å, æ—¥æœŸ, ä¸Šåˆä¸Šç­, ä¸Šç­æè¿°, ä¸‹åˆä¸‹ç­, ä¸‹ç­æè¿°, è¿Ÿåˆ°åˆ†é’Ÿ, æ—©é€€åˆ†é’Ÿ, ä¸Šç­å°æ—¶, æ—·å·¥(å¤©), æœªåˆ·æ¬¡æ•°
+    Dim fso As Object
+    Set fso = CreateObject("Scripting.FileSystemObject")
     Dim fileName As String
-    companyName = Trim(CStr(ws.Cells(1, 1).value))
-    fileName = filePath
-    
-    
-    
-    Dim lastRow As Long, lastCol As Long
-    lastRow = ws.Cells(ws.Rows.count, 1).End(xlUp).Row
-    lastCol = ws.Cells(1, ws.Columns.count).End(xlToLeft).Column
-    
-    Dim r As Long
-    For r = 2 To lastRow  '20260528 add
-        Dim firstCell As String
-        Dim regEx As Object
-        Dim matchList As Object
-        
-        ' ³‹K•\Œ»º–¾
-        Set regEx = CreateObject("VBScript.RegExp")
-        regEx.Pattern = "/(?<=?—Í-)(.*?)(?=-)/g"
-        regEx.Global = False
-        regEx.Multiline = False
-        
-        
-        ' ³‹K•\Œ»ƒ}ƒbƒ`
-        ' Set matchList = regEx.Execute(fileName)
-    
-        If regEx.Test(fileName) Then
-            firstCell = regEx.Execute(fileName)(0).SubMatches(0)  ' ’¼Ú\“l–¼
-            MsgBox "’ñæ““Il–¼F" & firstCell
+    fileName = fso.GetBaseName(filePath)
+
+    ' Read person name from sheet column C (col 3 = å§“å); fallback to filename
+    Dim rawPersonName As String
+    rawPersonName = Trim(CStr(ws.Cells(2, 3).Value))
+    If Len(rawPersonName) = 0 Then
+        Dim nameParts() As String
+        nameParts = Split(fileName, "-")
+        If UBound(nameParts) >= 2 Then
+            rawPersonName = Trim(nameParts(2))
         Else
-            MsgBox "–¢•C”z“l–¼"
+            LogToListBox "Cannot extract person name from sheet or file: " & fileName
+            Exit Sub
         End If
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        'firstCell = Trim(CStr(ws.Cells(r, 3).value))
-        
-        ' –¼s‚ÌŒŸoi3—ñ–Ú‚Ì–¼jƒtƒ@ƒCƒ‹–¼³‹K•\Œ»
-       ' If IsNameCell(firstCell) Then
-            Dim rawPersonName As String
-            rawPersonName = firstCell
-            Dim normPersonName As String
-            normPersonName = NormalizeName(rawPersonName)
-            
-            ' “ú•Êƒf[ƒ^‚Ì“Ç‚İæ‚è
-            Dim dailyDict As Object
-            Set dailyDict = CreateObject("Scripting.Dictionary")
-            
-            Dim totalHours As Double
-            totalHours = 0
-            
-            ' 2s–ÚˆÈ~‚ğ“ú•Êƒf[ƒ^‚Æ‚µ‚Ä“Ç‚İæ‚è
-            Dim dr As Long
-            dr = 2
-            Do While dr <= lastRow
-                Dim dayCell As String
-                dayCell = Trim(CStr(ws.Cells(dr, 4).value)) '“úŠú
-                
-                ' Ÿ‚Ì–¼s‚É“–‚½‚Á‚½‚çI—¹
-                If IsNameCell(dayCell) Then Exit Do
-                
-                ' “ú•tƒf[ƒ^‚ª‚ ‚ê‚Îˆ—
-                If IsNumeric(ToDate(dayCell)) And Len(ToDate(dayCell)) > 0 Then
-                    Dim dayNum As Long
-                    dayNum = CLng(ToDate(dayCell))
-                    
-                    Dim timeInVal As Variant, timeOutVal As Variant
-                    timeInVal = ws.Cells(dr, 5).value  ' o‹Îi5—ñ–Ú‘z’èj
-                    timeOutVal = ws.Cells(dr, 7).value ' ‘Ş‹Îi7—ñ–Ú‘z’èj
-                    
-                    If IsDate(timeInVal) And IsDate(timeOutVal) Then
-                        Dim workHrs As Double, overtime As Double
-                        workHrs = CalcWorkHours(CDate(timeInVal), CDate(timeOutVal))
-                        overtime = CalcOvertimeHours(workHrs)
-                        
-                        Dim dayInfo(0 To 4) As Variant
-                        dayInfo(0) = dayNum
-                        dayInfo(1) = Format(timeInVal, "hh:mm")
-                        dayInfo(2) = Format(timeOutVal, "hh:mm")
-                        dayInfo(3) = workHrs
-                        'add
-                        dayInfo(4) = overtime
-                        
-                        dailyDict.Add CStr(dr), dayInfo
-                        totalHours = totalHours + workHrs
-                    End If
+    End If
+
+    ' Read work number from sheet column B (col 2 = å·¥å·)
+    Dim sheetWorkNo As String
+    sheetWorkNo = Trim(CStr(ws.Cells(2, 2).Value))
+
+    Dim normPersonName As String
+    normPersonName = NormalizeName(rawPersonName)
+
+    Dim baseDate As Date
+    On Error Resume Next
+    baseDate = CDate(ConvertToDateStr(frmMain.txtPeriod.Text))
+    On Error GoTo 0
+    Dim baseY As Integer
+    If Year(baseDate) > 2000 Then
+        baseY = Year(baseDate)
+    Else
+        baseY = Year(Now)
+    End If
+
+    Dim dailyDict As Object
+    Set dailyDict = CreateObject("Scripting.Dictionary")
+    Dim totalHours As Double
+    Dim totalWeekdayOT As Double
+    Dim totalWeekendOT As Double
+    totalHours = 0#
+    totalWeekdayOT = 0#
+    totalWeekendOT = 0#
+
+    Dim lastRow As Long
+    lastRow = ws.Cells(ws.Rows.Count, 4).End(xlUp).Row
+
+    Dim dr As Long
+    For dr = 2 To lastRow
+        Dim dayCell As String
+        dayCell = Trim(CStr(ws.Cells(dr, 4).Value))
+
+        Dim dateStr As String
+        dateStr = ToDate(dayCell)
+
+        If IsValid8Date(dateStr) Then
+            Dim timeInVal As Variant, timeOutVal As Variant
+            timeInVal = ws.Cells(dr, 5).Value
+            timeOutVal = ws.Cells(dr, 7).Value
+
+            If IsDate(timeInVal) And IsDate(timeOutVal) Then
+                Dim workHrs As Double
+                workHrs = CalcWorkHours(CDate(timeInVal), CDate(timeOutVal))
+
+                Dim dateVal As Date
+                dateVal = DateSerial(CLng(Left(dateStr, 4)), CLng(Mid(dateStr, 5, 2)), CLng(Right(dateStr, 2)))
+                Dim isWeekend As Boolean
+                isWeekend = (Weekday(dateVal) = vbSunday Or Weekday(dateVal) = vbSaturday)
+
+                Dim wdOT As Double, weOT As Double, otHrs As Double, stdHrs As Double
+                If isWeekend Then
+                    stdHrs = 0#
+                    weOT = workHrs
+                    wdOT = 0#
+                    otHrs = workHrs
+                Else
+                    stdHrs = IIf(workHrs >= STANDARD_WORK_HOURS, STANDARD_WORK_HOURS, workHrs)
+                    otHrs = CalcOvertimeHours(workHrs)
+                    wdOT = otHrs
+                    weOT = 0#
                 End If
-                
-                dr = dr + 1
-            Loop
-            
-            Dim manMonth As Double
-            manMonth = CalcManMonth(totalHours)
-            
-            ' ’P‰¿ƒ}ƒbƒ`ƒ“ƒO
-            Dim unitPrice As Variant
-            unitPrice = 0
-            If priceDict.Exists(normPersonName) Then
-                Dim pInfo As Variant
-                pInfo = priceDict(normPersonName)
-                unitPrice = pInfo(1)
+
+                totalHours = totalHours + stdHrs
+                totalWeekdayOT = totalWeekdayOT + wdOT
+                totalWeekendOT = totalWeekendOT + weOT
+
+                Dim dayInfo(0 To 6) As Variant
+                dayInfo(0) = dateStr
+                dayInfo(1) = Format(timeInVal, "hh:mm")
+                dayInfo(2) = Format(timeOutVal, "hh:mm")
+                dayInfo(3) = workHrs
+                dayInfo(4) = otHrs
+                dayInfo(5) = wdOT
+                dayInfo(6) = weOT
+
+                dailyDict.Add CStr(dr), dayInfo
             End If
-            
-            ' WŒvƒf[ƒ^‚ğ•Û‘¶
-            Dim summary(0 To 9) As Variant
-            summary(COL_PERSON_NAME) = rawPersonName
-            summary(COL_LEVEL) = ""
-            summary(COL_WORK_PERIOD) = ""
-            summary(COL_WORK_CONTENT) = ""
-            summary(COL_WORK_NO) = ""
-            summary(COL_TOTAL_HOURS) = totalHours
-            summary(COL_MAN_MONTH) = manMonth
-            summary(COL_UNIT_PRICE) = unitPrice
-            summary(COL_COMPANY) = companyName
-            '‰ïĞ–¼ƒ}ƒbƒsƒ“ƒO
-            Dim arrRow, arrCol, i&
-           arrRow = Split(GetSetting("personData"), vbCrLf)
-           For i = LBound(arrRow) To UBound(arrRow)
-            If Trim(arrRow(i)) <> "" Then
-              arrCol = Split(arrRow(i), vbTab)
-              If UBound(arrCol) >= 5 And Trim(arrCol(0)) = Trim(rawPersonName) Then
-             
-               summary(COL_WORK_CONTENT) = arrCol(2) 'ì‹Æ“à—e
-               summary(COL_COMPANY) = arrCol(3) '‰ïĞ–¼
-                summary(COL_WORK_NO) = arrCol(4) 'ì‹Æ”Ô†
-                 summary(COL_LEVEL) = arrCol(5)  'ƒŒƒxƒ‹
-               Exit For
-             End If
-               End If
-            Next i
-            
-            Set summary(COL_DAILY_DATA) = dailyDict
-            
-            If m_summaryData.Exists(normPersonName) Then
-                ' Šù‘¶ƒf[ƒ^‚É‰ÁZ
-                Dim existing As Variant
-                existing = m_summaryData(normPersonName)
-                existing(COL_TOTAL_HOURS) = CDbl(existing(COL_TOTAL_HOURS)) + totalHours
-                existing(COL_MAN_MONTH) = CalcManMonth(CDbl(existing(COL_TOTAL_HOURS)))
-                m_summaryData(normPersonName) = existing
-            Else
-                m_summaryData.Add normPersonName, summary
+        End If
+    Next dr
+
+    Dim manMonth As Double
+    manMonth = CalcManMonth(totalHours)
+
+    Dim unitPrice As Variant
+    unitPrice = 0
+    If priceDict.Exists(normPersonName) Then
+        Dim pInfo As Variant
+        pInfo = priceDict(normPersonName)
+        unitPrice = pInfo(1)
+    End If
+
+    Dim summary(0 To 11) As Variant
+    summary(COL_PERSON_NAME) = rawPersonName
+    summary(COL_LEVEL) = ""
+    summary(COL_WORK_PERIOD) = ""
+    summary(COL_WORK_CONTENT) = ""
+    summary(COL_WORK_NO) = sheetWorkNo
+    summary(COL_TOTAL_HOURS) = totalHours
+    summary(COL_MAN_MONTH) = manMonth
+    summary(COL_UNIT_PRICE) = unitPrice
+    summary(COL_COMPANY) = Trim(CStr(ws.Cells(2, 1).Value))
+    Set summary(COL_DAILY_DATA) = dailyDict
+    summary(COL_WEEKDAY_OT) = totalWeekdayOT
+    summary(COL_WEEKEND_OT) = totalWeekendOT
+
+    Dim arrRow As Variant, arrCol As Variant, i As Long
+    arrRow = Split(GetSetting("personData"), vbCrLf)
+    For i = LBound(arrRow) To UBound(arrRow)
+        If Trim(arrRow(i)) <> "" Then
+            arrCol = Split(arrRow(i), vbTab)
+            If UBound(arrCol) >= 5 And Trim(arrCol(0)) = Trim(rawPersonName) Then
+                summary(COL_WORK_PERIOD) = arrCol(1)
+                summary(COL_WORK_CONTENT) = arrCol(2)
+                summary(COL_COMPANY) = arrCol(3)
+                summary(COL_WORK_NO) = arrCol(4)
+                summary(COL_LEVEL) = arrCol(5)
+                Exit For
             End If
-       ' End If
-    Next r
+        End If
+    Next i
+
+    If m_summaryData.Exists(normPersonName) Then
+        Dim existing As Variant
+        existing = m_summaryData(normPersonName)
+        existing(COL_TOTAL_HOURS) = CDbl(existing(COL_TOTAL_HOURS)) + totalHours
+        existing(COL_MAN_MONTH) = CalcManMonth(CDbl(existing(COL_TOTAL_HOURS)))
+        existing(COL_WEEKDAY_OT) = CDbl(existing(COL_WEEKDAY_OT)) + totalWeekdayOT
+        existing(COL_WEEKEND_OT) = CDbl(existing(COL_WEEKEND_OT)) + totalWeekendOT
+        m_summaryData(normPersonName) = existing
+    Else
+        m_summaryData.Add normPersonName, summary
+    End If
 End Sub
 
-''' ‘å˜A‹’“_‚Ì‹Î‘ÓƒtƒH[ƒ}ƒbƒg‚ğ‰ğÍi–k‹‚Æ“¯‚¶Šî–{\‘¢‚ğ‘z’èj
 Private Sub ParseDalianFormat(ByVal filePath As String, ByVal ws As Worksheet, ByVal priceDict As Object)
-    ' ‘å˜AŒ`®F–k‹‚Æ“¯—l‚Ì\‘¢‚ğ‘z’è
-    Call ParseBeijingFormat(ws, priceDict)
+    Call ParseBeijingFormat(filePath, ws, priceDict)
 End Sub
 
-''' ‰Í“ì‹’“_‚Ì‹Î‘ÓƒtƒH[ƒ}ƒbƒg‚ğ‰ğÍi–k‹‚Æ“¯‚¶Šî–{\‘¢‚ğ‘z’èj
 Private Sub ParseHenanFormat(ByVal filePath As String, ByVal ws As Worksheet, ByVal priceDict As Object)
-    ' ‰Í“ìŒ`®F–k‹‚Æ“¯—l‚Ì\‘¢‚ğ‘z’è
-    Call ParseBeijingFormat(ws, priceDict)
+    Call ParseBeijingFormat(filePath, ws, priceDict)
 End Sub
 
-''' ƒZƒ‹‚Ì’l‚ª–¼‚©‚Ç‚¤‚©‚ğ”»’è‚·‚é
-''' ŠÈˆÕ”»’èFŠ¿š2?4•¶š‚Å”š‚ğŠÜ‚Ü‚È‚¢
 Private Function IsNameCell(ByVal cellValue As String) As Boolean
     If Len(cellValue) < 2 Or Len(cellValue) > 4 Then
         IsNameCell = False
         Exit Function
     End If
-    
-    ' ”š‚ğŠÜ‚Şê‡‚Í–¼‚Å‚Í‚È‚¢
     Dim i As Long
     For i = 1 To Len(cellValue)
         Dim ch As String
         ch = Mid(cellValue, i, 1)
-        If ch Like "[0-9‚O-‚X]" Then
+        If ch Like "[0-9ï¿½O-ï¿½X]" Then
             IsNameCell = False
             Exit Function
         End If
     Next i
-    
     IsNameCell = True
 End Function
 
-''' ƒtƒ@ƒCƒ‹–¼‚©‚çŠúŠÔƒtƒBƒ‹ƒ^[‚É‡’v‚·‚é‚©ŠÈˆÕ”»’è
 Public Function IsFileInPeriod(ByVal filePath As String, ByVal period As String) As Boolean
     Dim fso As Object
     Set fso = CreateObject("Scripting.FileSystemObject")
-    
     Dim fileName As String
     fileName = CStr(fso.GetFileName(filePath))
-    
-    ' ŠúŠÔ•¶š—ñi—áF2026/4j‚ªƒtƒ@ƒCƒ‹–¼‚ÉŠÜ‚Ü‚ê‚é‚©
-    ' —áFperiod = "2026/4" ¨ ƒtƒ@ƒCƒ‹–¼‚É "202604" ‚Ü‚½‚Í "2026_04" ‚È‚Ç
     Dim periodVariants(0 To 3) As String
     periodVariants(0) = Replace(period, "/", "")
     periodVariants(1) = Replace(period, "/", "_")
-    periodVariants(2) = Replace(period, "/", "”N") & "Œ"
     periodVariants(3) = period
-    
     Dim i As Long
     For i = 0 To 3
         If InStr(1, fileName, periodVariants(i), vbTextCompare) > 0 Then
@@ -412,20 +394,40 @@ Public Function IsFileInPeriod(ByVal filePath As String, ByVal period As String)
             Exit Function
         End If
     Next i
-    
     IsFileInPeriod = False
 End Function
 
-'--------------------------------------------------
-' ¿‹‘¶¬ ƒƒCƒ“ˆ—
-'--------------------------------------------------
+Private Function GetCaseNameByWorkNo(ByVal workNo As String) As String
+    If Len(Trim(workNo)) = 0 Then
+        GetCaseNameByWorkNo = GetSetting(SET_CASE_NAME)
+        Exit Function
+    End If
+    Dim ws As Worksheet
+    On Error Resume Next
+    Set ws = ThisWorkbook.Worksheets("name")
+    On Error GoTo 0
+    If ws Is Nothing Then
+        GetCaseNameByWorkNo = GetSetting(SET_CASE_NAME)
+        Exit Function
+    End If
+    Dim lastRow As Long
+    lastRow = ws.Cells(ws.Rows.Count, 12).End(xlUp).Row
+    Dim i As Long
+    For i = 2 To lastRow
+        If Trim(CStr(ws.Cells(i, 12).Value)) = Trim(workNo) Then
+            GetCaseNameByWorkNo = Trim(CStr(ws.Cells(i, 13).Value))
+            Exit Function
+        End If
+    Next i
+    GetCaseNameByWorkNo = GetSetting(SET_CASE_NAME)
+End Function
 
-''' 3í—Ş‚Ì¿‹‘‚ğˆêŠ‡¶¬‚·‚é
+''' 3ï¿½ï¿½Ş‚Ìï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½êŠ‡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Public Function GenerateAllReports() As Boolean
     On Error GoTo ErrHandler
     
     If Not HasSummaryData Then
-        MsgBox "æ‚É‹Î‘ÓWŒv‚ğÀs‚µ‚Ä‚­‚¾‚³‚¢B", vbExclamation, "Šm”F"
+        MsgBox "ï¿½ï¿½É‹Î‘ÓWï¿½vï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½B", vbExclamation, "ï¿½mï¿½F"
         GenerateAllReports = False
         Exit Function
     End If
@@ -436,7 +438,7 @@ Public Function GenerateAllReports() As Boolean
         outputPath = ThisWorkbook.Path & "\Output"
     End If
     
-    ' o—ÍƒtƒHƒ‹ƒ_‚ª‚È‚¯‚ê‚Îì¬
+    ' ï¿½oï¿½Íƒtï¿½Hï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½È‚ï¿½ï¿½ï¿½Îì¬
     If Len(Dir(outputPath, vbDirectory)) = 0 Then
         MkDir outputPath
     End If
@@ -444,19 +446,19 @@ Public Function GenerateAllReports() As Boolean
     Application.ScreenUpdating = False
     Application.DisplayAlerts = False
     
-    ' 1. HSCNŒ±û‘¶¬
+    ' 1. HSCNï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     If Not GenerateHSCN(outputPath) Then
-        LogToListBox "HSCNŒ±û‘¶¬‚É¸”s‚µ‚Ü‚µ‚½"
+        LogToListBox "HSCNï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éï¿½ï¿½sï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½"
     End If
     
-    ' 2. –¾×‘¶¬
+    ' 2. ï¿½ï¿½ï¿½×ï¿½ï¿½ï¿½ï¿½ï¿½
     If Not GenerateCompanyReport(outputPath) Then
-        LogToListBox "–¾×‘¶¬‚É¸”s‚µ‚Ü‚µ‚½"
+        LogToListBox "ï¿½ï¿½ï¿½×ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éï¿½ï¿½sï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½"
     End If
     
-    ' 3. ”­’‘¶¬
+    ' 3. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     If Not GenerateOrderReport(outputPath) Then
-        LogToListBox "”­’‘¶¬‚É¸”s‚µ‚Ü‚µ‚½"
+        LogToListBox "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éï¿½ï¿½sï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½"
     End If
     
     Application.DisplayAlerts = True
@@ -472,245 +474,267 @@ ErrHandler:
     GenerateAllReports = False
 End Function
 
-''' HSCN?¾?‚ğ¶¬‚·‚é
+''' HSCN?ï¿½ï¿½?ï¿½ğ¶ï¿½ï¿½ï¿½ï¿½ï¿½
 Private Function GenerateHSCN(ByVal outputPath As String) As Boolean
     Dim templatePath As String
     templatePath = GetSetting(SET_HSCN_PATH)
-    
+
     If Len(templatePath) = 0 Or Len(Dir(templatePath)) = 0 Then
-        MsgBox OUTFILE_HSCN_ACCEPTANCE_REPORT & "‚Ìƒeƒ“ƒvƒŒ[ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB", vbExclamation
+        MsgBox OUTFILE_HSCN_ACCEPTANCE_REPORT & "ï¿½Ìƒeï¿½ï¿½ï¿½vï¿½ï¿½ï¿½[ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½Â‚ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½B", vbExclamation
         GenerateHSCN = False
         Exit Function
     End If
-    
-    ' o—Íƒtƒ@ƒCƒ‹–¼
+
     Dim outputFile As String
-    outputFile = outputPath & "\" & OUTFILE_HSCN_ACCEPTANCE_REPORT & "_" & Format(Now, "yyyymmddhhmmss ") & ".xlsx"
-    
-    ' ƒeƒ“ƒvƒŒ[ƒg‚ğƒRƒs[
+    outputFile = outputPath & "\" & OUTFILE_HSCN_ACCEPTANCE_REPORT & "_" & Format(Now, "yyyymmddhhmmss") & ".xlsx"
     FileCopy templatePath, outputFile
-    
-    ' o—Íƒtƒ@ƒCƒ‹‚ğŠJ‚¢‚Ä•ÒW
+
     Dim wb As Workbook
     Set wb = Workbooks.Open(outputFile)
-    
-    ' ---- Timesheet ƒV[ƒg‚Ì¶¬ ----
+
     Dim templateWS As Worksheet
     On Error Resume Next
     Set templateWS = wb.Worksheets(TEMPLATE_TIMESHEET)
     On Error GoTo 0
-    
+
     If Not templateWS Is Nothing Then
-        ' Šelˆõ‚ÌTimesheetƒV[ƒg‚ğì¬
         Dim key As Variant
         For Each key In m_summaryData.Keys
             Dim summary As Variant
             summary = m_summaryData(key)
-            
-            ' Timesheet_Template‚ğƒRƒs[
-            templateWS.Copy After:=wb.Worksheets(wb.Worksheets.count)
+
+            templateWS.Copy After:=wb.Worksheets(wb.Worksheets.Count)
             Dim newWS As Worksheet
-            Set newWS = ActiveSheet  'wb.Worksheets(wb.Worksheets.count)
-            
+            Set newWS = ActiveSheet
+
             Dim personName As String
             personName = CStr(summary(COL_PERSON_NAME))
-            
-            ' ƒV[ƒg–¼İ’èi31•¶š§ŒÀ‚É’ˆÓj
+
             Dim sheetName As String
             sheetName = "Timesheet_" & personName
             If Len(sheetName) > 31 Then sheetName = Left(sheetName, 31)
             On Error Resume Next
             newWS.Name = sheetName
             On Error GoTo 0
-            
-            ' Row 4F‰ïĞ–¼
-            newWS.Cells(3, 3).value = CStr(summary(COL_COMPANY))
-            
-            ' Row 6F–¼A“™‹‰
-            newWS.Cells(4, 3).value = personName
-            newWS.Cells(4, 5).value = CStr(summary(COL_LEVEL))
-            
-            ' Row 8F”NŒA‘HAlŒ
-            newWS.Cells(5, 4).value = ConvertToDateStr(frmMain.txtPeriod.Text)
-            'newWS.Cells(8, 4).value = CDbl(summary(COL_TOTAL_HOURS))
-            'newWS.Cells(8, 6).value = CDbl(summary(COL_MAN_MONTH))
-            
-            '’ •[‘ÎÛŠúŠÔ•¶š—ñ‚æ‚è”NŒæ“¾
-            Dim baseDate As Date
-              baseDate = ConvertToDateStr(frmMain.txtPeriod.Text)
-            Dim baseY As Integer
-            baseY = Year(baseDate)
-            
-            ' Row 11ˆÈ~F“ú•Êƒf[ƒ^
+
+            newWS.Cells(3, 3).Value = CStr(summary(COL_COMPANY))
+            newWS.Cells(4, 3).Value = personName
+            newWS.Cells(4, 5).Value = CStr(summary(COL_LEVEL))
+            newWS.Cells(5, 4).Value = ConvertToDateStr(frmMain.txtPeriod.Text)
+
             Dim dailyDict As Object
             Set dailyDict = summary(COL_DAILY_DATA)
-            
-            If Not dailyDict Is Nothing And dailyDict.count > 0 Then
+
+            If Not dailyDict Is Nothing And dailyDict.Count > 0 Then
                 Dim rowIdx As Long
                 rowIdx = 8
-                
                 Dim dk As Variant
                 For Each dk In dailyDict.Keys
                     Dim dayInfo As Variant
                     dayInfo = dailyDict(dk)
-                    
-                    'newWS.Cells(rowIdx, 1).value = month(dayInfo(0))  ' Œ
-                    'newWS.Cells(rowIdx, 2).value = Day(dayInfo(0))   ' “ú
-                    newWS.Cells(rowIdx, 3).value = GetWorkContentByDate(personName, newWS.Cells(8, 1).value, day(newWS.Cells(rowIdx, 2).value), baseY)      'CStr(summary(COL_WORK_CONTENT)) 'GetSetting(SET_SERVICE_CONTENT)           ' ì‹Æ“à—eiŒã‚Åè“®“ü—Íj
-                    newWS.Cells(rowIdx, 5).value = dayInfo(1)   ' o‹Î
-                    newWS.Cells(rowIdx, 6).value = dayInfo(2)   ' ‘Ş‹Î
-                    newWS.Cells(rowIdx, 7).value = dayInfo(4)            ' c‹Æ”Çiƒeƒ“ƒvƒŒ‚ÌŒvZ®‘z’èj
-                    newWS.Cells(rowIdx, 8).value = IIf(dayInfo(3) < 8, 8 - dayInfo(3), 0)          ' Œ‡‹Î
-                    newWS.Cells(rowIdx, 9).value = IIf(dayInfo(3) >= 8, 8, dayInfo(3))  ' H”
-                    
+
+                    Dim dateStr As String
+                    dateStr = CStr(dayInfo(0))
+                    Dim dateM As Long, dateD As Long
+                    dateM = CLng(Mid(dateStr, 5, 2))
+                    dateD = CLng(Right(dateStr, 2))
+                    newWS.Cells(rowIdx, 1).Value = dateM
+                    newWS.Cells(rowIdx, 2).Value = dateD
+
+                    Dim dateY As Long
+                    dateY = CLng(Left(dateStr, 4))
+                    newWS.Cells(rowIdx, 3).Value = GetWorkContentByDate(personName, dateM, dateD, dateY)
+
+                    newWS.Cells(rowIdx, 5).Value = dayInfo(1)
+                    newWS.Cells(rowIdx, 6).Value = dayInfo(2)
+                    newWS.Cells(rowIdx, 7).Value = dayInfo(4)
+
+                    Dim stdH As Double
+                    Dim isWE As Boolean
+                    isWE = CDbl(dayInfo(6)) > 0
+                    If isWE Then
+                        stdH = 0#
+                    Else
+                        stdH = IIf(dayInfo(3) >= STANDARD_WORK_HOURS, STANDARD_WORK_HOURS, dayInfo(3))
+                    End If
+                    newWS.Cells(rowIdx, 8).Value = IIf(stdH < STANDARD_WORK_HOURS And Not isWE, STANDARD_WORK_HOURS - stdH, 0)
+                    newWS.Cells(rowIdx, 9).Value = stdH
+
                     rowIdx = rowIdx + 1
                 Next dk
             End If
         Next key
-        
-        ' Timesheet_Template‚ğ”ñ•\¦‚É
+
         templateWS.Visible = xlSheetHidden
     End If
-    
-    ' ---- Acceptance RequestƒV[ƒg‚Ì•ÒW ----
+
     Dim accWS As Worksheet
     On Error Resume Next
     Set accWS = wb.Worksheets(TEMPLATE_ACCEPTANCE)
     On Error GoTo 0
-    
+
     If Not accWS Is Nothing Then
-        ' Row 5ƒvƒƒWƒFƒNƒgİ’è‚©‚ç–„‚ß‚İ
-        accWS.Cells(5, 2).value = GetSetting(SET_PROJECT_NAME)
-        accWS.Cells(6, 2).value = GetSetting(SET_SUPPLIER)
-        accWS.Cells(7, 2).value = GetSetting(SET_SERVICE_MODE)
-        accWS.Cells(8, 2).value = GetSetting(SET_SERVICE_CONTENT)
-        'accWS.Cells(9, 2).value = GetSetting(SET_DELIVERABLE)
-        accWS.Cells(10, 2).value = GetSetting(SET_MILESTONE)
-        accWS.Cells(11, 2).value = ConvertToDateStr(frmMain.txtPeriod.Text)   'GetSetting(SET_CONTRACT_NO)
-        accWS.Cells(11, 4).value = ConvertToDateStr(frmMain.txtPeriodTo.Text)   'GetSetting(SET_PO)
-        
-        ' Row 15ˆÈ~Flˆõ•ÊWŒvƒf[ƒ^
+        accWS.Cells(5, 2).Value = GetSetting(SET_PROJECT_NAME)
+        accWS.Cells(6, 2).Value = GetSetting(SET_SUPPLIER)
+        accWS.Cells(7, 2).Value = GetSetting(SET_SERVICE_MODE)
+        accWS.Cells(8, 2).Value = GetSetting(SET_SERVICE_CONTENT)
+        accWS.Cells(10, 2).Value = GetSetting(SET_MILESTONE)
+        accWS.Cells(11, 2).Value = ConvertToDateStr(frmMain.txtPeriod.Text)
+        accWS.Cells(11, 4).Value = ConvertToDateStr(frmMain.txtPeriodTo.Text)
+
         Dim accRow As Long
         accRow = 15
-        Dim idx As Long
-        idx = 1
-        
+
         For Each key In m_summaryData.Keys
             summary = m_summaryData(key)
-            
-            'accWS.Cells(accRow, 1).value = idx
-            accWS.Cells(accRow, 2).value = CStr(summary(COL_PERSON_NAME)) 'Name:
-            accWS.Cells(accRow, 3).value = CStr(summary(COL_LEVEL)) 'level
-            'accWS.Cells(accRow, 4).value = CStr(summary(COL_WORK_CONTENT))
-           ' accWS.Cells(accRow, 6).value = CDbl(summary(COL_MAN_MONTH))
-            accWS.Cells(accRow, 7).Formula = "=Timesheet_" & accWS.Cells(accRow, 2).value & "!I5"
-            accWS.Cells(accRow, 9).value = CDbl(summary(COL_UNIT_PRICE))
-            ' ‹àŠz—ñ‚Íƒeƒ“ƒvƒŒ[ƒg‚ÌŒvZ®‚É”C‚¹‚é
-            
+            personName = CStr(summary(COL_PERSON_NAME))
+
+            Dim pStart As String, pEnd As String
+            Dim wp As String
+            wp = CStr(summary(COL_WORK_PERIOD))
+            If Len(wp) > 0 Then
+                Dim wpParts() As String
+                wpParts = Split(wp, "-")
+                If UBound(wpParts) >= 1 Then
+                    pStart = Trim(wpParts(0))
+                    pEnd = Trim(wpParts(1))
+                End If
+            End If
+            If Len(pStart) = 0 Then pStart = ConvertToDateStr(frmMain.txtPeriod.Text)
+            If Len(pEnd) = 0 Then pEnd = ConvertToDateStr(frmMain.txtPeriodTo.Text)
+
+            accWS.Cells(accRow, 2).Value = personName
+            accWS.Cells(accRow, 3).Value = CStr(summary(COL_LEVEL))
+            accWS.Cells(accRow, 4).Value = pStart
+            accWS.Cells(accRow, 6).Value = pEnd
+            Dim tsName As String
+            tsName = "Timesheet_" & personName
+            If Len(tsName) > 31 Then tsName = Left(tsName, 31)
+            accWS.Cells(accRow, 7).Formula = "=" & tsName & "!I15"
+            accWS.Cells(accRow, 9).Value = CDbl(summary(COL_UNIT_PRICE))
+            accWS.Cells(accRow, 10).Value = 1
             accRow = accRow + 1
-            idx = idx + 1
+
+            Dim wdOT As Double, weOT As Double
+            wdOT = CDbl(summary(COL_WEEKDAY_OT))
+            weOT = CDbl(summary(COL_WEEKEND_OT))
+            If wdOT + weOT > 0 Then
+                accWS.Cells(accRow, 2).Value = personName
+                accWS.Cells(accRow, 3).Value = CStr(summary(COL_LEVEL))
+                accWS.Cells(accRow, 4).Value = pStart
+                accWS.Cells(accRow, 6).Value = pEnd
+                accWS.Cells(accRow, 8).Value = "1ï¿½ï¿½"
+                accWS.Cells(accRow, 10).Value = 1
+                accWS.Cells(accRow, 11).Value = wdOT * 15 + weOT * 20
+                accRow = accRow + 1
+            End If
         Next key
     End If
-    
+
     wb.Close SaveChanges:=True
     GenerateHSCN = True
 End Function
 
-''' ‰ïĞ–¾×‚ğ¶¬‚·‚é
 Private Function GenerateCompanyReport(ByVal outputPath As String) As Boolean
     Dim templatePath As String
     templatePath = GetSetting(SET_COMPANY_PATH)
-    
+
     If Len(templatePath) = 0 Or Len(Dir(templatePath)) = 0 Then
-        MsgBox OUTFILE_MEISAI & "‚Ìƒeƒ“ƒvƒŒ[ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB", vbExclamation
+        MsgBox OUTFILE_MEISAI & "ï¿½Ìƒeï¿½ï¿½ï¿½vï¿½ï¿½ï¿½[ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½Â‚ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½B", vbExclamation
         GenerateCompanyReport = False
         Exit Function
     End If
-    
+
     Dim outputFile As String
-    outputFile = outputPath & "\" & OUTFILE_MEISAI & "_" & Format(Now, "yyyymmddhhmmss ") & ".xlsx"
-    
+    outputFile = outputPath & "\" & OUTFILE_MEISAI & "_" & Format(Now, "yyyymmddhhmmss") & ".xlsx"
     FileCopy templatePath, outputFile
-    
+
     Dim wb As Workbook
     Set wb = Workbooks.Open(outputFile)
     Dim ws As Worksheet
     Set ws = wb.Worksheets(1)
-    
-    ' Row 2ˆÈ~‚Élˆõ•Êƒf[ƒ^‚ğ–„‚ß‚İ
+
     Dim dataRow As Long
     dataRow = 2
-    Dim idx As Long
-    idx = 1
-    
+
     Dim key As Variant
     For Each key In m_summaryData.Keys
         Dim summary As Variant
         summary = m_summaryData(key)
-        
-        'ws.Cells(dataRow, 1).value = summary(COL_DAILY_DATA)  '“ú•t
-        ws.Cells(dataRow, 2).value = CStr(summary(COL_WORK_CONTENT))   'ì‹Æ“à—eCStr(summary(COL_PERSON_NAME))
-        ws.Cells(dataRow, 3).value = "Œö‹¤ƒV" 'CStr(summary(COL_WORK_PERIOD))
-        ws.Cells(dataRow, 4).value = CStr(summary(COL_WORK_CONTENT))  'ˆÄŒ“à—e
-        ws.Cells(dataRow, 5).value = CDbl(summary(COL_TOTAL_HOURS))
-        ws.Cells(dataRow, 6).value = CStr(summary(COL_PERSON_NAME))  '–¼‘O CDbl(summary(COL_MAN_MONTH))
-        ws.Cells(dataRow, 7).value = CDbl(summary(COL_UNIT_PRICE)) '’P‰¿@CStr(summary(COL_LEVEL))
-        'ws.Cells(dataRow, 8).value = CDbl(summary(COL_UNIT_PRICE))
-        
+
+        Dim workPeriod As String
+        workPeriod = CStr(summary(COL_WORK_PERIOD))
+        If Len(workPeriod) = 0 Then
+            workPeriod = ConvertToDateStr(frmMain.txtPeriod.Text) & "~" & ConvertToDateStr(frmMain.txtPeriodTo.Text)
+        End If
+        ws.Cells(dataRow, 1).Value = workPeriod
+
+        Dim workContent As String
+        workContent = CStr(summary(COL_WORK_CONTENT))
+        If Len(workContent) = 0 Then workContent = GetSetting(SET_SERVICE_CONTENT)
+        ws.Cells(dataRow, 2).Value = workContent
+
+        ws.Cells(dataRow, 3).Value = ""
+
+        ws.Cells(dataRow, 4).Value = GetCaseNameByWorkNo(CStr(summary(COL_WORK_NO)))
+
+        ws.Cells(dataRow, 5).Value = ""
+
+        ws.Cells(dataRow, 6).Value = CStr(summary(COL_PERSON_NAME))
+
+        ws.Cells(dataRow, 7).Value = CDbl(summary(COL_UNIT_PRICE))
+
+        ws.Cells(dataRow, 8).Value = CDbl(summary(COL_TOTAL_HOURS))
+
         dataRow = dataRow + 1
-        idx = idx + 1
     Next key
-    
+
     wb.Close SaveChanges:=True
     GenerateCompanyReport = True
 End Function
 
-''' ”­’‘‚ğ¶¬‚·‚é
 Private Function GenerateOrderReport(ByVal outputPath As String) As Boolean
     Dim templatePath As String
     templatePath = GetSetting(SET_ORDER_PATH)
-    
+
     If Len(templatePath) = 0 Or Len(Dir(templatePath)) = 0 Then
-        MsgBox OUTFILE_HSCN_PO & "‚Ìƒeƒ“ƒvƒŒ[ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB", vbExclamation
+        MsgBox OUTFILE_HSCN_PO & "ï¿½Ìƒeï¿½ï¿½ï¿½vï¿½ï¿½ï¿½[ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½Â‚ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½B", vbExclamation
         GenerateOrderReport = False
         Exit Function
     End If
-    
+
     Dim outputFile As String
-    outputFile = outputPath & "\" & OUTFILE_HSCN_PO & "_" & Format(Now, "yyyymmddhhmmss ") & ".xls"
-    
+    outputFile = outputPath & "\" & OUTFILE_HSCN_PO & "_" & Format(Now, "yyyymmddhhmmss") & ".xlsx"
     FileCopy templatePath, outputFile
-    
+
     Dim wb As Workbook
     Set wb = Workbooks.Open(outputFile)
     Dim ws As Worksheet
     Set ws = wb.Worksheets(1)
-    
-    ' Row 14ˆÈ~i•\ˆêj‚Élˆõ•Êƒf[ƒ^‚ğ–„‚ß‚İ
+
     Dim dataRow As Long
-    dataRow = 14
-    Dim idx As Long
-    idx = 1
-    
+    dataRow = 13
+
     Dim key As Variant
     For Each key In m_summaryData.Keys
         Dim summary As Variant
         summary = m_summaryData(key)
-        
-        ws.Cells(dataRow, 1).value = idx
-        ws.Cells(dataRow, 2).value = CStr(summary(COL_PERSON_NAME))
-        ws.Cells(dataRow, 3).value = CStr(summary(COL_WORK_PERIOD))
-        ws.Cells(dataRow, 4).value = CStr(summary(COL_WORK_CONTENT))
-        ws.Cells(dataRow, 5).value = CDbl(summary(COL_TOTAL_HOURS))
-        ws.Cells(dataRow, 6).value = CDbl(summary(COL_MAN_MONTH))
-        ws.Cells(dataRow, 7).value = CStr(summary(COL_LEVEL))
-        ws.Cells(dataRow, 8).value = CDbl(summary(COL_UNIT_PRICE))
-        
+
+        ws.Cells(dataRow, 2).Value = GetCaseNameByWorkNo(CStr(summary(COL_WORK_NO)))
+
+        ws.Cells(dataRow, 6).Value = CDbl(summary(COL_TOTAL_HOURS))
+
+        ws.Cells(dataRow, 7).Value = CDbl(summary(COL_UNIT_PRICE))
+
+        ws.Cells(dataRow, 9).Value = "ï¿½vï¿½ï¿½"
+
+        ws.Cells(dataRow, 14).Value = CStr(summary(COL_PERSON_NAME))
+
+        ws.Cells(dataRow, 15).Value = CStr(summary(COL_WORK_NO))
+
         dataRow = dataRow + 1
-        idx = idx + 1
     Next key
-    
+
     wb.Close SaveChanges:=True
     GenerateOrderReport = True
 End Function
-

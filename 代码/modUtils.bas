@@ -478,20 +478,39 @@ Function GetWorkContentByDate( _
                 dateParts = Split(dateRange, "-")
                 
                 If UBound(dateParts) = 1 Then
-                    ' 開始日と終了日を作成
-                    Dim sM As Long, sD As Long, eM As Long, eD As Long
-                    sM = CLng(Split(Trim(dateParts(0)), "/")(0))
-                    sD = CLng(Split(Trim(dateParts(0)), "/")(1))
-                    eM = CLng(Split(Trim(dateParts(1)), "/")(0))
-                    eD = CLng(Split(Trim(dateParts(1)), "/")(1))
-                    
-                    startDate = DateSerial(targetY, sM, sD)
-                    endDate = DateSerial(targetY, eM, eD)
-                    
-                    ' 日付が範囲内の場合、作業内容を返す
-                    If currentDate >= startDate And currentDate <= endDate Then
-                        GetWorkContentByDate = Trim(fields(2))
-                        Exit Function
+                    ' 開始日と終了日を作成（yyyy/mm/dd-yyyy/mm/dd 形式対応）
+                    Dim sParts() As String, eParts() As String
+                    Dim sY As Long, sM As Long, sD As Long
+                    Dim eY As Long, eM As Long, eD As Long
+                    sParts = Split(Trim(dateParts(0)), "/")
+                    eParts = Split(Trim(dateParts(1)), "/")
+                    Dim parsedOK As Boolean
+                    parsedOK = True
+                    If UBound(sParts) >= 2 Then
+                        sY = CLng(sParts(0)) : sM = CLng(sParts(1)) : sD = CLng(sParts(2))
+                    ElseIf UBound(sParts) = 1 Then
+                        sY = targetY : sM = CLng(sParts(0)) : sD = CLng(sParts(1))
+                    Else
+                        parsedOK = False
+                    End If
+                    If parsedOK Then
+                        If UBound(eParts) >= 2 Then
+                            eY = CLng(eParts(0)) : eM = CLng(eParts(1)) : eD = CLng(eParts(2))
+                        ElseIf UBound(eParts) = 1 Then
+                            eY = targetY : eM = CLng(eParts(0)) : eD = CLng(eParts(1))
+                        Else
+                            parsedOK = False
+                        End If
+                    End If
+                    If parsedOK Then
+                        startDate = DateSerial(sY, sM, sD)
+                        endDate = DateSerial(eY, eM, eD)
+                        
+                        ' 日付が範囲内の場合、作業内容を返す
+                        If currentDate >= startDate And currentDate <= endDate Then
+                            GetWorkContentByDate = Trim(fields(2))
+                            Exit Function
+                        End If
                     End If
                 End If
             End If
