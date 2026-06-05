@@ -2,62 +2,62 @@ Attribute VB_Name = "modMain"
 Option Explicit
 
 '==================================================
-' ƒƒCƒ“ˆ—ƒ‚ƒWƒ…[ƒ‹
-' ‹Î‘ÓWŒv‚ÌƒRƒAƒƒWƒbƒN‚Æ¿‹‘¶¬ˆ—
+' ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½[ï¿½ï¿½
+' ï¿½Î‘ÓWï¿½vï¿½ÌƒRï¿½Aï¿½ï¿½ï¿½Wï¿½bï¿½Nï¿½Æï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 '==================================================
 
-' WŒvŒ‹‰Ê‚ğ•Û‚·‚éƒ‚ƒWƒ…[ƒ‹ƒŒƒxƒ‹•Ï”
-Private m_summaryData As Object  ' Dictionary: Key=³‹K‰»–¼, Value=WŒvŒ‹‰Ê”z—ñ
+' ï¿½Wï¿½vï¿½ï¿½ï¿½Ê‚ï¿½Ûï¿½ï¿½ï¿½ï¿½éƒ‚ï¿½Wï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½xï¿½ï¿½ï¿½Ïï¿½
+Private m_summaryData As Object  ' Dictionary: Key=ï¿½ï¿½ï¿½Kï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, Value=ï¿½Wï¿½vï¿½ï¿½ï¿½Ê”zï¿½ï¿½
 
 '--------------------------------------------------
-' ŒöŠJƒvƒƒpƒeƒBFWŒvŒ‹‰Ê
+' ï¿½ï¿½ï¿½Jï¿½vï¿½ï¿½ï¿½pï¿½eï¿½Bï¿½Fï¿½Wï¿½vï¿½ï¿½ï¿½ï¿½
 '--------------------------------------------------
 
-''' WŒvŒ‹‰Ê‚ğ•Ô‚·
+''' ï¿½Wï¿½vï¿½ï¿½ï¿½Ê‚ï¿½Ô‚ï¿½
 Public Property Get SummaryData() As Object
     Set SummaryData = m_summaryData
 End Property
 
-''' WŒvŒ‹‰Ê‚ª‚ ‚é‚©
+''' ï¿½Wï¿½vï¿½ï¿½ï¿½Ê‚ï¿½ï¿½ï¿½ï¿½é‚©
 Public Property Get HasSummaryData() As Boolean
     HasSummaryData = Not (m_summaryData Is Nothing)
 End Property
 
 '--------------------------------------------------
-' ‹Î‘ÓWŒv ƒƒCƒ“ˆ—
+' ï¿½Î‘ÓWï¿½v ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 '--------------------------------------------------
 
-''' ‘I‘ğ‚³‚ê‚½‹Î‘Óƒtƒ@ƒCƒ‹‚ğWŒv‚·‚é
-''' filePathsFWŒv‘ÎÛ‚ÌExcelƒtƒ@ƒCƒ‹ƒpƒX”z—ñ
-''' locationF‹’“_–¼i–k‹/‘å˜A/‰Í“ìj
-''' periodFilterF‹Æ–±ŠúŠÔƒtƒBƒ‹ƒ^[i‹ó•¶š‚Ìê‡‚Í‘SŠúŠÔj
-''' –ß‚è’lFWŒv¬Œ÷‚È‚ç True
+''' ï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½ê‚½ï¿½Î‘Óƒtï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½Wï¿½vï¿½ï¿½ï¿½ï¿½
+''' filePathsï¿½Fï¿½Wï¿½vï¿½ÎÛ‚ï¿½Excelï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½pï¿½Xï¿½zï¿½ï¿½
+''' locationï¿½Fï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½iï¿½kï¿½ï¿½/ï¿½ï¿½A/ï¿½Í“ï¿½j
+''' periodFilterï¿½Fï¿½Æ–ï¿½ï¿½ï¿½ï¿½Ôƒtï¿½Bï¿½ï¿½ï¿½^ï¿½[ï¿½iï¿½ó•¶ï¿½ï¿½Ìê‡ï¿½Í‘Sï¿½ï¿½ï¿½Ôj
+''' ï¿½ß‚ï¿½lï¿½Fï¿½Wï¿½vï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½ True
 Public Function ExecuteAggregation(ByVal filePaths As Variant, _
                                     ByVal location As String, _
                                     ByVal periodFilter As String) As Boolean
     On Error GoTo ErrHandler
     
-    ' WŒvƒf[ƒ^‚Ì‰Šú‰»
+    ' ï¿½Wï¿½vï¿½fï¿½[ï¿½^ï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½
     Set m_summaryData = CreateObject("Scripting.Dictionary")
     
-    ' ’P‰¿•\‚ğ“Ç‚İ‚Ş
+    ' ï¿½Pï¿½ï¿½ï¿½\ï¿½ï¿½Ç‚İï¿½ï¿½ï¿½
     Dim priceDict As Object
     Set priceDict = LoadPriceTable()
     
-    ' Šeƒtƒ@ƒCƒ‹‚ğˆ—
+    ' ï¿½eï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     Dim i As Long
     For i = LBound(filePaths) To UBound(filePaths)
         Dim filePath As String
         filePath = CStr(filePaths(i))
         
-        ' ŠúŠÔƒtƒBƒ‹ƒ^[‚ª‚ ‚ê‚ÎAƒtƒ@ƒCƒ‹–¼‚ÅŠÈˆÕƒtƒBƒ‹ƒ^ƒŠƒ“ƒO
+        ' ï¿½ï¿½ï¿½Ôƒtï¿½Bï¿½ï¿½ï¿½^ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎAï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ÅŠÈˆÕƒtï¿½Bï¿½ï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½O
         'If Len(periodFilter) > 0 Then
             'If Not IsFileInPeriod(filePath, periodFilter) Then
                 'GoTo NextFile
             'End If
         'End If
         
-        ' ‹Î‘Óƒtƒ@ƒCƒ‹‚ğ“Ç‚İæ‚è
+        ' ï¿½Î‘Óƒtï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½Ç‚İï¿½ï¿½
         Call ProcessAttendanceFile(filePath, location, priceDict)
         
 NextFile:
@@ -71,7 +71,7 @@ ErrHandler:
     ExecuteAggregation = False
 End Function
 
-''' ’P‰¿•\‚ğ“Ç‚İ‚İA³‹K‰»–¼ ¨ ’P‰¿î•ñ ‚Ì«‘‚ğ•Ô‚·
+''' ï¿½Pï¿½ï¿½ï¿½\ï¿½ï¿½Ç‚İï¿½ï¿½İAï¿½ï¿½ï¿½Kï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Pï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½
 Private Function LoadPriceTable() As Object
     Dim result As Object
     Set result = CreateObject("Scripting.Dictionary")
@@ -96,7 +96,7 @@ Private Function LoadPriceTable() As Object
         Exit Function
     End If
     
-    ' ’P‰¿•\‚ğ“Ç‚İæ‚èê—p‚ÅŠJ‚­
+    ' ï¿½Pï¿½ï¿½ï¿½\ï¿½ï¿½Ç‚İï¿½ï¿½ï¿½pï¿½ÅŠJï¿½ï¿½
     Dim wb As Workbook
     Application.ScreenUpdating = False
     Set wb = Workbooks.Open(filePath, ReadOnly:=True)
@@ -119,9 +119,9 @@ Private Function LoadPriceTable() As Object
             normName = NormalizeName(rawName)
             
             Dim priceInfo(0 To 2) As Variant
-            priceInfo(0) = rawName  ' Œ³‚Ì–¼
-            priceInfo(1) = ws.Cells(r, unitCol).value  ' Œ_–ñ’P‰¿
-            priceInfo(2) = ws.Cells(r, endCol).value   ' ‘ŞĞ“ú
+            priceInfo(0) = rawName  ' ï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½
+            priceInfo(1) = ws.Cells(r, unitCol).value  ' ï¿½_ï¿½ï¿½Pï¿½ï¿½
+            priceInfo(2) = ws.Cells(r, endCol).value   ' ï¿½ŞĞ“ï¿½
             
             If Not result.Exists(normName) Then
                 result.Add normName, priceInfo
@@ -135,14 +135,14 @@ Private Function LoadPriceTable() As Object
     Set LoadPriceTable = result
 End Function
 
-''' 1‚Â‚Ì‹Î‘Óƒtƒ@ƒCƒ‹‚ğˆ—‚·‚é
-' 1‚Â‚Ì‹Î‘Óƒtƒ@ƒCƒ‹‚ğˆ—‚·‚é
+''' 1ï¿½Â‚Ì‹Î‘Óƒtï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+' 1ï¿½Â‚Ì‹Î‘Óƒtï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Private Sub ProcessAttendanceFile(ByVal filePath As String, _
                                    ByVal location As String, _
                                    ByVal priceDict As Object)
     On Error GoTo ErrorHandler
     
-    ' ƒtƒ@ƒCƒ‹‚Ì‘¶İŠm”F
+    ' ï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½Ì‘ï¿½ï¿½İŠmï¿½F
     Dim fso As Object
     Set fso = CreateObject("Scripting.FileSystemObject")
     
@@ -154,13 +154,13 @@ Private Sub ProcessAttendanceFile(ByVal filePath As String, _
     Dim wb As Workbook
     Application.ScreenUpdating = False
     
-    ' Unicodeƒtƒ@ƒCƒ‹–¼‚É‘Î‰‚·‚é‚½‚ßAFSOŒo—R‚Åƒtƒ@ƒCƒ‹‚ğŠJ‚­
+    ' Unicodeï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½É‘Î‰ï¿½ï¿½ï¿½ï¿½é‚½ï¿½ßAFSOï¿½oï¿½Rï¿½Åƒtï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½Jï¿½ï¿½
     Set wb = Workbooks.Open(filePath, ReadOnly:=True, UpdateLinks:=False)
     
     Dim ws As Worksheet
     Set ws = wb.Worksheets(1)
     
-    ' ‹’“_•Ê‚ÉƒtƒH[ƒ}ƒbƒg‚ªˆÙ‚È‚é‚½‚ßA‹’“_‚É‰‚¶‚½“Ç‚İæ‚è‚ğs‚¤
+    ' ï¿½ï¿½ï¿½_ï¿½Ê‚Éƒtï¿½Hï¿½[ï¿½}ï¿½bï¿½gï¿½ï¿½ï¿½Ù‚È‚é‚½ï¿½ßAï¿½ï¿½ï¿½_ï¿½É‰ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç‚İï¿½ï¿½ï¿½ï¿½sï¿½ï¿½
     Select Case location
         Case LOCATION_BEIJING
             Call ParseBeijingFormat(filePath, ws, priceDict)
@@ -169,7 +169,7 @@ Private Sub ProcessAttendanceFile(ByVal filePath As String, _
         Case LOCATION_HENAN
             Call ParseHenanFormat(filePath, ws, priceDict)
         Case Else
-            ' ƒfƒtƒHƒ‹ƒgF–k‹Œ`®‚Æ‚µ‚Äˆ—
+            ' ï¿½fï¿½tï¿½Hï¿½ï¿½ï¿½gï¿½Fï¿½kï¿½ï¿½ï¿½`ï¿½ï¿½ï¿½Æ‚ï¿½ï¿½Äï¿½ï¿½ï¿½
             Call ParseBeijingFormat(filePath, ws, priceDict)
     End Select
     
@@ -188,29 +188,38 @@ ErrorHandler:
 End Sub
 
 '--------------------------------------------------
-' ‹’“_•ÊƒtƒH[ƒ}ƒbƒg‰ğÍ
+' ï¿½ï¿½ï¿½_ï¿½Êƒtï¿½Hï¿½[ï¿½}ï¿½bï¿½gï¿½ï¿½ï¿½
 '--------------------------------------------------
 
-''' –k‹‹’“_‚Ì‹Î‘ÓƒtƒH[ƒ}ƒbƒg‚ğ‰ğÍ
-''' ‘z’èƒŒƒCƒAƒEƒgF
-'''   Row 1Fƒwƒbƒ_[i‰ïĞ–¼‚È‚Çj
-'''   Row 2F“ú•Êƒf[ƒ^
+''' ï¿½kï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½Ì‹Î‘Óƒtï¿½Hï¿½[ï¿½}ï¿½bï¿½gï¿½ï¿½ï¿½ï¿½ï¿½
+''' ï¿½zï¿½èƒŒï¿½Cï¿½Aï¿½Eï¿½gï¿½F
+'''   Row 1ï¿½Fï¿½wï¿½bï¿½_ï¿½[ï¿½iï¿½ï¿½Ğ–ï¿½ï¿½È‚Çj
+'''   Row 2ï¿½Fï¿½ï¿½ï¿½Êƒfï¿½[ï¿½^
 Private Sub ParseBeijingFormat(ByVal filePath As String, ByVal ws As Worksheet, ByVal priceDict As Object)
-    ' File name format: e.g. name-company-personName-code-workno-startdate-enddate
+    ' Column layout (A onward): éƒ¨é—¨, å·¥å·, å§“å, æ—¥æœŸ, ä¸Šåˆä¸Šç­, ä¸Šç­æè¿°, ä¸‹åˆä¸‹ç­, ä¸‹ç­æè¿°, è¿Ÿåˆ°åˆ†é’Ÿ, æ—©é€€åˆ†é’Ÿ, ä¸Šç­å°æ—¶, æ—·å·¥(å¤©), æœªåˆ·æ¬¡æ•°
     Dim fso As Object
     Set fso = CreateObject("Scripting.FileSystemObject")
     Dim fileName As String
     fileName = fso.GetBaseName(filePath)
 
-    Dim nameParts() As String
-    nameParts = Split(fileName, "-")
+    ' Read person name from sheet column C (col 3 = å§“å); fallback to filename
     Dim rawPersonName As String
-    If UBound(nameParts) >= 2 Then
-        rawPersonName = Trim(nameParts(2))
-    Else
-        LogToListBox "Cannot extract person name from: " & fileName
-        Exit Sub
+    rawPersonName = Trim(CStr(ws.Cells(2, 3).Value))
+    If Len(rawPersonName) = 0 Then
+        Dim nameParts() As String
+        nameParts = Split(fileName, "-")
+        If UBound(nameParts) >= 2 Then
+            rawPersonName = Trim(nameParts(2))
+        Else
+            LogToListBox "Cannot extract person name from sheet or file: " & fileName
+            Exit Sub
+        End If
     End If
+
+    ' Read work number from sheet column B (col 2 = å·¥å·)
+    Dim sheetWorkNo As String
+    sheetWorkNo = Trim(CStr(ws.Cells(2, 2).Value))
+
     Dim normPersonName As String
     normPersonName = NormalizeName(rawPersonName)
 
@@ -306,11 +315,11 @@ Private Sub ParseBeijingFormat(ByVal filePath As String, ByVal ws As Worksheet, 
     summary(COL_LEVEL) = ""
     summary(COL_WORK_PERIOD) = ""
     summary(COL_WORK_CONTENT) = ""
-    summary(COL_WORK_NO) = ""
+    summary(COL_WORK_NO) = sheetWorkNo
     summary(COL_TOTAL_HOURS) = totalHours
     summary(COL_MAN_MONTH) = manMonth
     summary(COL_UNIT_PRICE) = unitPrice
-    summary(COL_COMPANY) = Trim(CStr(ws.Cells(1, 1).Value))
+    summary(COL_COMPANY) = Trim(CStr(ws.Cells(2, 1).Value))
     Set summary(COL_DAILY_DATA) = dailyDict
     summary(COL_WEEKDAY_OT) = totalWeekdayOT
     summary(COL_WEEKEND_OT) = totalWeekendOT
@@ -361,7 +370,7 @@ Private Function IsNameCell(ByVal cellValue As String) As Boolean
     For i = 1 To Len(cellValue)
         Dim ch As String
         ch = Mid(cellValue, i, 1)
-        If ch Like "[0-9‚O-‚X]" Then
+        If ch Like "[0-9ï¿½O-ï¿½X]" Then
             IsNameCell = False
             Exit Function
         End If
@@ -413,12 +422,12 @@ Private Function GetCaseNameByWorkNo(ByVal workNo As String) As String
     GetCaseNameByWorkNo = GetSetting(SET_CASE_NAME)
 End Function
 
-''' 3í—Ş‚Ì¿‹‘‚ğˆêŠ‡¶¬‚·‚é
+''' 3ï¿½ï¿½Ş‚Ìï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½êŠ‡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Public Function GenerateAllReports() As Boolean
     On Error GoTo ErrHandler
     
     If Not HasSummaryData Then
-        MsgBox "æ‚É‹Î‘ÓWŒv‚ğÀs‚µ‚Ä‚­‚¾‚³‚¢B", vbExclamation, "Šm”F"
+        MsgBox "ï¿½ï¿½É‹Î‘ÓWï¿½vï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½B", vbExclamation, "ï¿½mï¿½F"
         GenerateAllReports = False
         Exit Function
     End If
@@ -429,7 +438,7 @@ Public Function GenerateAllReports() As Boolean
         outputPath = ThisWorkbook.Path & "\Output"
     End If
     
-    ' o—ÍƒtƒHƒ‹ƒ_‚ª‚È‚¯‚ê‚Îì¬
+    ' ï¿½oï¿½Íƒtï¿½Hï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½È‚ï¿½ï¿½ï¿½Îì¬
     If Len(Dir(outputPath, vbDirectory)) = 0 Then
         MkDir outputPath
     End If
@@ -437,19 +446,19 @@ Public Function GenerateAllReports() As Boolean
     Application.ScreenUpdating = False
     Application.DisplayAlerts = False
     
-    ' 1. HSCNŒ±û‘¶¬
+    ' 1. HSCNï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     If Not GenerateHSCN(outputPath) Then
-        LogToListBox "HSCNŒ±û‘¶¬‚É¸”s‚µ‚Ü‚µ‚½"
+        LogToListBox "HSCNï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éï¿½ï¿½sï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½"
     End If
     
-    ' 2. –¾×‘¶¬
+    ' 2. ï¿½ï¿½ï¿½×ï¿½ï¿½ï¿½ï¿½ï¿½
     If Not GenerateCompanyReport(outputPath) Then
-        LogToListBox "–¾×‘¶¬‚É¸”s‚µ‚Ü‚µ‚½"
+        LogToListBox "ï¿½ï¿½ï¿½×ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éï¿½ï¿½sï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½"
     End If
     
-    ' 3. ”­’‘¶¬
+    ' 3. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     If Not GenerateOrderReport(outputPath) Then
-        LogToListBox "”­’‘¶¬‚É¸”s‚µ‚Ü‚µ‚½"
+        LogToListBox "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éï¿½ï¿½sï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½"
     End If
     
     Application.DisplayAlerts = True
@@ -465,13 +474,13 @@ ErrHandler:
     GenerateAllReports = False
 End Function
 
-''' HSCN?¾?‚ğ¶¬‚·‚é
+''' HSCN?ï¿½ï¿½?ï¿½ğ¶ï¿½ï¿½ï¿½ï¿½ï¿½
 Private Function GenerateHSCN(ByVal outputPath As String) As Boolean
     Dim templatePath As String
     templatePath = GetSetting(SET_HSCN_PATH)
 
     If Len(templatePath) = 0 Or Len(Dir(templatePath)) = 0 Then
-        MsgBox OUTFILE_HSCN_ACCEPTANCE_REPORT & "‚Ìƒeƒ“ƒvƒŒ[ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB", vbExclamation
+        MsgBox OUTFILE_HSCN_ACCEPTANCE_REPORT & "ï¿½Ìƒeï¿½ï¿½ï¿½vï¿½ï¿½ï¿½[ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½Â‚ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½B", vbExclamation
         GenerateHSCN = False
         Exit Function
     End If
@@ -614,7 +623,7 @@ Private Function GenerateHSCN(ByVal outputPath As String) As Boolean
                 accWS.Cells(accRow, 3).Value = CStr(summary(COL_LEVEL))
                 accWS.Cells(accRow, 4).Value = pStart
                 accWS.Cells(accRow, 6).Value = pEnd
-                accWS.Cells(accRow, 8).Value = "1®"
+                accWS.Cells(accRow, 8).Value = "1ï¿½ï¿½"
                 accWS.Cells(accRow, 10).Value = 1
                 accWS.Cells(accRow, 11).Value = wdOT * 15 + weOT * 20
                 accRow = accRow + 1
@@ -631,7 +640,7 @@ Private Function GenerateCompanyReport(ByVal outputPath As String) As Boolean
     templatePath = GetSetting(SET_COMPANY_PATH)
 
     If Len(templatePath) = 0 Or Len(Dir(templatePath)) = 0 Then
-        MsgBox OUTFILE_MEISAI & "‚Ìƒeƒ“ƒvƒŒ[ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB", vbExclamation
+        MsgBox OUTFILE_MEISAI & "ï¿½Ìƒeï¿½ï¿½ï¿½vï¿½ï¿½ï¿½[ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½Â‚ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½B", vbExclamation
         GenerateCompanyReport = False
         Exit Function
     End If
@@ -689,7 +698,7 @@ Private Function GenerateOrderReport(ByVal outputPath As String) As Boolean
     templatePath = GetSetting(SET_ORDER_PATH)
 
     If Len(templatePath) = 0 Or Len(Dir(templatePath)) = 0 Then
-        MsgBox OUTFILE_HSCN_PO & "‚Ìƒeƒ“ƒvƒŒ[ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB", vbExclamation
+        MsgBox OUTFILE_HSCN_PO & "ï¿½Ìƒeï¿½ï¿½ï¿½vï¿½ï¿½ï¿½[ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½Â‚ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½B", vbExclamation
         GenerateOrderReport = False
         Exit Function
     End If
@@ -717,7 +726,7 @@ Private Function GenerateOrderReport(ByVal outputPath As String) As Boolean
 
         ws.Cells(dataRow, 7).Value = CDbl(summary(COL_UNIT_PRICE))
 
-        ws.Cells(dataRow, 9).Value = "—vˆõ"
+        ws.Cells(dataRow, 9).Value = "ï¿½vï¿½ï¿½"
 
         ws.Cells(dataRow, 14).Value = CStr(summary(COL_PERSON_NAME))
 
