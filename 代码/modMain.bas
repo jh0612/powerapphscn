@@ -196,186 +196,167 @@ End Sub
 '''   Row 1：ヘッダー（会社名など）
 '''   Row 2：日別データ
 Private Sub ParseBeijingFormat(ByVal filePath As String, ByVal ws As Worksheet, ByVal priceDict As Object)
-    ' 簡易実装：全セルをスキャンして氏名行と日付行を検出
-    
-    Dim companyName As String
+    ' File name format: e.g. name-company-personName-code-workno-startdate-enddate
+    Dim fso As Object
+    Set fso = CreateObject("Scripting.FileSystemObject")
     Dim fileName As String
-    companyName = Trim(CStr(ws.Cells(1, 1).value))
-    fileName = filePath
-    
-    
-    
-    Dim lastRow As Long, lastCol As Long
-    lastRow = ws.Cells(ws.Rows.count, 1).End(xlUp).Row
-    lastCol = ws.Cells(1, ws.Columns.count).End(xlToLeft).Column
-    
-    Dim r As Long
-    For r = 2 To lastRow  '20260528 add
-        Dim firstCell As String
-        Dim regEx As Object
-        Dim matchList As Object
-        
-        ' 正規表現声明
-        Set regEx = CreateObject("VBScript.RegExp")
-        regEx.Pattern = "/(?<=?力-)(.*?)(?=-)/g"
-        regEx.Global = False
-        regEx.Multiline = False
-        
-        
-        ' 正規表現マッチ
-        ' Set matchList = regEx.Execute(fileName)
-    
-        If regEx.Test(fileName) Then
-            firstCell = regEx.Execute(fileName)(0).SubMatches(0)  ' 直接拿到人名
-            MsgBox "提取到的人名：" & firstCell
-        Else
-            MsgBox "未匹配到人名"
-        End If
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        'firstCell = Trim(CStr(ws.Cells(r, 3).value))
-        
-        ' 氏名行の検出（3列目の氏名）ファイル名正規表現
-       ' If IsNameCell(firstCell) Then
-            Dim rawPersonName As String
-            rawPersonName = firstCell
-            Dim normPersonName As String
-            normPersonName = NormalizeName(rawPersonName)
-            
-            ' 日別データの読み取り
-            Dim dailyDict As Object
-            Set dailyDict = CreateObject("Scripting.Dictionary")
-            
-            Dim totalHours As Double
-            totalHours = 0
-            
-            ' 2行目以降を日別データとして読み取り
-            Dim dr As Long
-            dr = 2
-            Do While dr <= lastRow
-                Dim dayCell As String
-                dayCell = Trim(CStr(ws.Cells(dr, 4).value)) '日期
-                
-                ' 次の氏名行に当たったら終了
-                If IsNameCell(dayCell) Then Exit Do
-                
-                ' 日付データがあれば処理
-                If IsNumeric(ToDate(dayCell)) And Len(ToDate(dayCell)) > 0 Then
-                    Dim dayNum As Long
-                    dayNum = CLng(ToDate(dayCell))
-                    
-                    Dim timeInVal As Variant, timeOutVal As Variant
-                    timeInVal = ws.Cells(dr, 5).value  ' 出勤時刻（5列目想定）
-                    timeOutVal = ws.Cells(dr, 7).value ' 退勤時刻（7列目想定）
-                    
-                    If IsDate(timeInVal) And IsDate(timeOutVal) Then
-                        Dim workHrs As Double, overtime As Double
-                        workHrs = CalcWorkHours(CDate(timeInVal), CDate(timeOutVal))
-                        overtime = CalcOvertimeHours(workHrs)
-                        
-                        Dim dayInfo(0 To 4) As Variant
-                        dayInfo(0) = dayNum
-                        dayInfo(1) = Format(timeInVal, "hh:mm")
-                        dayInfo(2) = Format(timeOutVal, "hh:mm")
-                        dayInfo(3) = workHrs
-                        'add
-                        dayInfo(4) = overtime
-                        
-                        dailyDict.Add CStr(dr), dayInfo
-                        totalHours = totalHours + workHrs
-                    End If
+    fileName = fso.GetBaseName(filePath)
+
+    Dim nameParts() As String
+    nameParts = Split(fileName, "-")
+    Dim rawPersonName As String
+    If UBound(nameParts) >= 2 Then
+        rawPersonName = Trim(nameParts(2))
+    Else
+        LogToListBox "Cannot extract person name from: " & fileName
+        Exit Sub
+    End If
+    Dim normPersonName As String
+    normPersonName = NormalizeName(rawPersonName)
+
+    Dim baseDate As Date
+    On Error Resume Next
+    baseDate = CDate(ConvertToDateStr(frmMain.txtPeriod.Text))
+    On Error GoTo 0
+    Dim baseY As Integer
+    If Year(baseDate) > 2000 Then
+        baseY = Year(baseDate)
+    Else
+        baseY = Year(Now)
+    End If
+
+    Dim dailyDict As Object
+    Set dailyDict = CreateObject("Scripting.Dictionary")
+    Dim totalHours As Double
+    Dim totalWeekdayOT As Double
+    Dim totalWeekendOT As Double
+    totalHours = 0#
+    totalWeekdayOT = 0#
+    totalWeekendOT = 0#
+
+    Dim lastRow As Long
+    lastRow = ws.Cells(ws.Rows.Count, 4).End(xlUp).Row
+
+    Dim dr As Long
+    For dr = 2 To lastRow
+        Dim dayCell As String
+        dayCell = Trim(CStr(ws.Cells(dr, 4).Value))
+
+        Dim dateStr As String
+        dateStr = ToDate(dayCell)
+
+        If IsValid8Date(dateStr) Then
+            Dim timeInVal As Variant, timeOutVal As Variant
+            timeInVal = ws.Cells(dr, 5).Value
+            timeOutVal = ws.Cells(dr, 7).Value
+
+            If IsDate(timeInVal) And IsDate(timeOutVal) Then
+                Dim workHrs As Double
+                workHrs = CalcWorkHours(CDate(timeInVal), CDate(timeOutVal))
+
+                Dim dateVal As Date
+                dateVal = DateSerial(CLng(Left(dateStr, 4)), CLng(Mid(dateStr, 5, 2)), CLng(Right(dateStr, 2)))
+                Dim isWeekend As Boolean
+                isWeekend = (Weekday(dateVal) = vbSunday Or Weekday(dateVal) = vbSaturday)
+
+                Dim wdOT As Double, weOT As Double, otHrs As Double, stdHrs As Double
+                If isWeekend Then
+                    stdHrs = 0#
+                    weOT = workHrs
+                    wdOT = 0#
+                    otHrs = workHrs
+                Else
+                    stdHrs = IIf(workHrs >= STANDARD_WORK_HOURS, STANDARD_WORK_HOURS, workHrs)
+                    otHrs = CalcOvertimeHours(workHrs)
+                    wdOT = otHrs
+                    weOT = 0#
                 End If
-                
-                dr = dr + 1
-            Loop
-            
-            Dim manMonth As Double
-            manMonth = CalcManMonth(totalHours)
-            
-            ' 単価マッチング
-            Dim unitPrice As Variant
-            unitPrice = 0
-            If priceDict.Exists(normPersonName) Then
-                Dim pInfo As Variant
-                pInfo = priceDict(normPersonName)
-                unitPrice = pInfo(1)
+
+                totalHours = totalHours + stdHrs
+                totalWeekdayOT = totalWeekdayOT + wdOT
+                totalWeekendOT = totalWeekendOT + weOT
+
+                Dim dayInfo(0 To 6) As Variant
+                dayInfo(0) = dateStr
+                dayInfo(1) = Format(timeInVal, "hh:mm")
+                dayInfo(2) = Format(timeOutVal, "hh:mm")
+                dayInfo(3) = workHrs
+                dayInfo(4) = otHrs
+                dayInfo(5) = wdOT
+                dayInfo(6) = weOT
+
+                dailyDict.Add CStr(dr), dayInfo
             End If
-            
-            ' 集計データを保存
-            Dim summary(0 To 9) As Variant
-            summary(COL_PERSON_NAME) = rawPersonName
-            summary(COL_LEVEL) = ""
-            summary(COL_WORK_PERIOD) = ""
-            summary(COL_WORK_CONTENT) = ""
-            summary(COL_WORK_NO) = ""
-            summary(COL_TOTAL_HOURS) = totalHours
-            summary(COL_MAN_MONTH) = manMonth
-            summary(COL_UNIT_PRICE) = unitPrice
-            summary(COL_COMPANY) = companyName
-            '会社名マッピング
-            Dim arrRow, arrCol, i&
-           arrRow = Split(GetSetting("personData"), vbCrLf)
-           For i = LBound(arrRow) To UBound(arrRow)
-            If Trim(arrRow(i)) <> "" Then
-              arrCol = Split(arrRow(i), vbTab)
-              If UBound(arrCol) >= 5 And Trim(arrCol(0)) = Trim(rawPersonName) Then
-             
-               summary(COL_WORK_CONTENT) = arrCol(2) '作業内容
-               summary(COL_COMPANY) = arrCol(3) '会社名
-                summary(COL_WORK_NO) = arrCol(4) '作業番号
-                 summary(COL_LEVEL) = arrCol(5)  'レベル
-               Exit For
-             End If
-               End If
-            Next i
-            
-            Set summary(COL_DAILY_DATA) = dailyDict
-            
-            If m_summaryData.Exists(normPersonName) Then
-                ' 既存データに加算
-                Dim existing As Variant
-                existing = m_summaryData(normPersonName)
-                existing(COL_TOTAL_HOURS) = CDbl(existing(COL_TOTAL_HOURS)) + totalHours
-                existing(COL_MAN_MONTH) = CalcManMonth(CDbl(existing(COL_TOTAL_HOURS)))
-                m_summaryData(normPersonName) = existing
-            Else
-                m_summaryData.Add normPersonName, summary
+        End If
+    Next dr
+
+    Dim manMonth As Double
+    manMonth = CalcManMonth(totalHours)
+
+    Dim unitPrice As Variant
+    unitPrice = 0
+    If priceDict.Exists(normPersonName) Then
+        Dim pInfo As Variant
+        pInfo = priceDict(normPersonName)
+        unitPrice = pInfo(1)
+    End If
+
+    Dim summary(0 To 11) As Variant
+    summary(COL_PERSON_NAME) = rawPersonName
+    summary(COL_LEVEL) = ""
+    summary(COL_WORK_PERIOD) = ""
+    summary(COL_WORK_CONTENT) = ""
+    summary(COL_WORK_NO) = ""
+    summary(COL_TOTAL_HOURS) = totalHours
+    summary(COL_MAN_MONTH) = manMonth
+    summary(COL_UNIT_PRICE) = unitPrice
+    summary(COL_COMPANY) = Trim(CStr(ws.Cells(1, 1).Value))
+    Set summary(COL_DAILY_DATA) = dailyDict
+    summary(COL_WEEKDAY_OT) = totalWeekdayOT
+    summary(COL_WEEKEND_OT) = totalWeekendOT
+
+    Dim arrRow As Variant, arrCol As Variant, i As Long
+    arrRow = Split(GetSetting("personData"), vbCrLf)
+    For i = LBound(arrRow) To UBound(arrRow)
+        If Trim(arrRow(i)) <> "" Then
+            arrCol = Split(arrRow(i), vbTab)
+            If UBound(arrCol) >= 5 And Trim(arrCol(0)) = Trim(rawPersonName) Then
+                summary(COL_WORK_PERIOD) = arrCol(1)
+                summary(COL_WORK_CONTENT) = arrCol(2)
+                summary(COL_COMPANY) = arrCol(3)
+                summary(COL_WORK_NO) = arrCol(4)
+                summary(COL_LEVEL) = arrCol(5)
+                Exit For
             End If
-       ' End If
-    Next r
+        End If
+    Next i
+
+    If m_summaryData.Exists(normPersonName) Then
+        Dim existing As Variant
+        existing = m_summaryData(normPersonName)
+        existing(COL_TOTAL_HOURS) = CDbl(existing(COL_TOTAL_HOURS)) + totalHours
+        existing(COL_MAN_MONTH) = CalcManMonth(CDbl(existing(COL_TOTAL_HOURS)))
+        existing(COL_WEEKDAY_OT) = CDbl(existing(COL_WEEKDAY_OT)) + totalWeekdayOT
+        existing(COL_WEEKEND_OT) = CDbl(existing(COL_WEEKEND_OT)) + totalWeekendOT
+        m_summaryData(normPersonName) = existing
+    Else
+        m_summaryData.Add normPersonName, summary
+    End If
 End Sub
 
-''' 大連拠点の勤怠フォーマットを解析（北京と同じ基本構造を想定）
 Private Sub ParseDalianFormat(ByVal filePath As String, ByVal ws As Worksheet, ByVal priceDict As Object)
-    ' 大連形式：北京と同様の構造を想定
-    Call ParseBeijingFormat(ws, priceDict)
+    Call ParseBeijingFormat(filePath, ws, priceDict)
 End Sub
 
-''' 河南拠点の勤怠フォーマットを解析（北京と同じ基本構造を想定）
 Private Sub ParseHenanFormat(ByVal filePath As String, ByVal ws As Worksheet, ByVal priceDict As Object)
-    ' 河南形式：北京と同様の構造を想定
-    Call ParseBeijingFormat(ws, priceDict)
+    Call ParseBeijingFormat(filePath, ws, priceDict)
 End Sub
 
-''' セルの値が氏名かどうかを判定する
-''' 簡易判定：漢字2?4文字で数字を含まない
 Private Function IsNameCell(ByVal cellValue As String) As Boolean
     If Len(cellValue) < 2 Or Len(cellValue) > 4 Then
         IsNameCell = False
         Exit Function
     End If
-    
-    ' 数字を含む場合は氏名ではない
     Dim i As Long
     For i = 1 To Len(cellValue)
         Dim ch As String
@@ -385,26 +366,18 @@ Private Function IsNameCell(ByVal cellValue As String) As Boolean
             Exit Function
         End If
     Next i
-    
     IsNameCell = True
 End Function
 
-''' ファイル名から期間フィルターに合致するか簡易判定
 Public Function IsFileInPeriod(ByVal filePath As String, ByVal period As String) As Boolean
     Dim fso As Object
     Set fso = CreateObject("Scripting.FileSystemObject")
-    
     Dim fileName As String
     fileName = CStr(fso.GetFileName(filePath))
-    
-    ' 期間文字列（例：2026/4）がファイル名に含まれるか
-    ' 例：period = "2026/4" → ファイル名に "202604" または "2026_04" など
     Dim periodVariants(0 To 3) As String
     periodVariants(0) = Replace(period, "/", "")
     periodVariants(1) = Replace(period, "/", "_")
-    periodVariants(2) = Replace(period, "/", "年") & "月"
     periodVariants(3) = period
-    
     Dim i As Long
     For i = 0 To 3
         If InStr(1, fileName, periodVariants(i), vbTextCompare) > 0 Then
@@ -412,13 +385,33 @@ Public Function IsFileInPeriod(ByVal filePath As String, ByVal period As String)
             Exit Function
         End If
     Next i
-    
     IsFileInPeriod = False
 End Function
 
-'--------------------------------------------------
-' 請求書生成 メイン処理
-'--------------------------------------------------
+Private Function GetCaseNameByWorkNo(ByVal workNo As String) As String
+    If Len(Trim(workNo)) = 0 Then
+        GetCaseNameByWorkNo = GetSetting(SET_CASE_NAME)
+        Exit Function
+    End If
+    Dim ws As Worksheet
+    On Error Resume Next
+    Set ws = ThisWorkbook.Worksheets("name")
+    On Error GoTo 0
+    If ws Is Nothing Then
+        GetCaseNameByWorkNo = GetSetting(SET_CASE_NAME)
+        Exit Function
+    End If
+    Dim lastRow As Long
+    lastRow = ws.Cells(ws.Rows.Count, 12).End(xlUp).Row
+    Dim i As Long
+    For i = 2 To lastRow
+        If Trim(CStr(ws.Cells(i, 12).Value)) = Trim(workNo) Then
+            GetCaseNameByWorkNo = Trim(CStr(ws.Cells(i, 13).Value))
+            Exit Function
+        End If
+    Next i
+    GetCaseNameByWorkNo = GetSetting(SET_CASE_NAME)
+End Function
 
 ''' 3種類の請求書を一括生成する
 Public Function GenerateAllReports() As Boolean
@@ -476,241 +469,263 @@ End Function
 Private Function GenerateHSCN(ByVal outputPath As String) As Boolean
     Dim templatePath As String
     templatePath = GetSetting(SET_HSCN_PATH)
-    
+
     If Len(templatePath) = 0 Or Len(Dir(templatePath)) = 0 Then
         MsgBox OUTFILE_HSCN_ACCEPTANCE_REPORT & "のテンプレートが見つかりません。", vbExclamation
         GenerateHSCN = False
         Exit Function
     End If
-    
-    ' 出力ファイル名
+
     Dim outputFile As String
-    outputFile = outputPath & "\" & OUTFILE_HSCN_ACCEPTANCE_REPORT & "_" & Format(Now, "yyyymmddhhmmss ") & ".xlsx"
-    
-    ' テンプレートをコピー
+    outputFile = outputPath & "\\" & OUTFILE_HSCN_ACCEPTANCE_REPORT & "_" & Format(Now, "yyyymmddhhmmss") & ".xlsx"
     FileCopy templatePath, outputFile
-    
-    ' 出力ファイルを開いて編集
+
     Dim wb As Workbook
     Set wb = Workbooks.Open(outputFile)
-    
-    ' ---- Timesheet シートの生成 ----
+
     Dim templateWS As Worksheet
     On Error Resume Next
     Set templateWS = wb.Worksheets(TEMPLATE_TIMESHEET)
     On Error GoTo 0
-    
+
     If Not templateWS Is Nothing Then
-        ' 各人員のTimesheetシートを作成
         Dim key As Variant
         For Each key In m_summaryData.Keys
             Dim summary As Variant
             summary = m_summaryData(key)
-            
-            ' Timesheet_Templateをコピー
-            templateWS.Copy After:=wb.Worksheets(wb.Worksheets.count)
+
+            templateWS.Copy After:=wb.Worksheets(wb.Worksheets.Count)
             Dim newWS As Worksheet
-            Set newWS = ActiveSheet  'wb.Worksheets(wb.Worksheets.count)
-            
+            Set newWS = ActiveSheet
+
             Dim personName As String
             personName = CStr(summary(COL_PERSON_NAME))
-            
-            ' シート名設定（31文字制限に注意）
+
             Dim sheetName As String
             sheetName = "Timesheet_" & personName
             If Len(sheetName) > 31 Then sheetName = Left(sheetName, 31)
             On Error Resume Next
             newWS.Name = sheetName
             On Error GoTo 0
-            
-            ' Row 4：会社名
-            newWS.Cells(3, 3).value = CStr(summary(COL_COMPANY))
-            
-            ' Row 6：氏名、等級
-            newWS.Cells(4, 3).value = personName
-            newWS.Cells(4, 5).value = CStr(summary(COL_LEVEL))
-            
-            ' Row 8：年月、総工時、人月
-            newWS.Cells(5, 4).value = ConvertToDateStr(frmMain.txtPeriod.Text)
-            'newWS.Cells(8, 4).value = CDbl(summary(COL_TOTAL_HOURS))
-            'newWS.Cells(8, 6).value = CDbl(summary(COL_MAN_MONTH))
-            
-            '帳票対象期間文字列より年月取得
-            Dim baseDate As Date
-              baseDate = ConvertToDateStr(frmMain.txtPeriod.Text)
-            Dim baseY As Integer
-            baseY = Year(baseDate)
-            
-            ' Row 11以降：日別データ
+
+            newWS.Cells(3, 3).Value = CStr(summary(COL_COMPANY))
+            newWS.Cells(4, 3).Value = personName
+            newWS.Cells(4, 5).Value = CStr(summary(COL_LEVEL))
+            newWS.Cells(5, 4).Value = ConvertToDateStr(frmMain.txtPeriod.Text)
+
             Dim dailyDict As Object
             Set dailyDict = summary(COL_DAILY_DATA)
-            
-            If Not dailyDict Is Nothing And dailyDict.count > 0 Then
+
+            If Not dailyDict Is Nothing And dailyDict.Count > 0 Then
                 Dim rowIdx As Long
                 rowIdx = 8
-                
                 Dim dk As Variant
                 For Each dk In dailyDict.Keys
                     Dim dayInfo As Variant
                     dayInfo = dailyDict(dk)
-                    
-                    'newWS.Cells(rowIdx, 1).value = month(dayInfo(0))  ' 月
-                    'newWS.Cells(rowIdx, 2).value = Day(dayInfo(0))   ' 日
-                    newWS.Cells(rowIdx, 3).value = GetWorkContentByDate(personName, newWS.Cells(8, 1).value, day(newWS.Cells(rowIdx, 2).value), baseY)      'CStr(summary(COL_WORK_CONTENT)) 'GetSetting(SET_SERVICE_CONTENT)           ' 作業内容（後で手動入力）
-                    newWS.Cells(rowIdx, 5).value = dayInfo(1)   ' 出勤
-                    newWS.Cells(rowIdx, 6).value = dayInfo(2)   ' 退勤
-                    newWS.Cells(rowIdx, 7).value = dayInfo(4)            ' 残業班（テンプレの計算式想定）
-                    newWS.Cells(rowIdx, 8).value = IIf(dayInfo(3) < 8, 8 - dayInfo(3), 0)          ' 欠勤
-                    newWS.Cells(rowIdx, 9).value = IIf(dayInfo(3) >= 8, 8, dayInfo(3))  ' 工数
-                    
+
+                    Dim dateStr As String
+                    dateStr = CStr(dayInfo(0))
+                    Dim dateM As Long, dateD As Long
+                    dateM = CLng(Mid(dateStr, 5, 2))
+                    dateD = CLng(Right(dateStr, 2))
+                    newWS.Cells(rowIdx, 1).Value = dateM
+                    newWS.Cells(rowIdx, 2).Value = dateD
+
+                    Dim dateY As Long
+                    dateY = CLng(Left(dateStr, 4))
+                    newWS.Cells(rowIdx, 3).Value = GetWorkContentByDate(personName, dateM, dateD, dateY)
+
+                    newWS.Cells(rowIdx, 5).Value = dayInfo(1)
+                    newWS.Cells(rowIdx, 6).Value = dayInfo(2)
+                    newWS.Cells(rowIdx, 7).Value = dayInfo(4)
+
+                    Dim stdH As Double
+                    Dim isWE As Boolean
+                    isWE = CDbl(dayInfo(6)) > 0 And CDbl(dayInfo(5)) = 0 And CDbl(dayInfo(3)) > 0
+                    If isWE Then
+                        stdH = 0#
+                    Else
+                        stdH = IIf(dayInfo(3) >= STANDARD_WORK_HOURS, STANDARD_WORK_HOURS, dayInfo(3))
+                    End If
+                    newWS.Cells(rowIdx, 8).Value = IIf(stdH < STANDARD_WORK_HOURS And Not isWE, STANDARD_WORK_HOURS - stdH, 0)
+                    newWS.Cells(rowIdx, 9).Value = stdH
+
                     rowIdx = rowIdx + 1
                 Next dk
             End If
         Next key
-        
-        ' Timesheet_Templateを非表示に
+
         templateWS.Visible = xlSheetHidden
     End If
-    
-    ' ---- Acceptance Requestシートの編集 ----
+
     Dim accWS As Worksheet
     On Error Resume Next
     Set accWS = wb.Worksheets(TEMPLATE_ACCEPTANCE)
     On Error GoTo 0
-    
+
     If Not accWS Is Nothing Then
-        ' Row 5プロジェクト設定から埋め込み
-        accWS.Cells(5, 2).value = GetSetting(SET_PROJECT_NAME)
-        accWS.Cells(6, 2).value = GetSetting(SET_SUPPLIER)
-        accWS.Cells(7, 2).value = GetSetting(SET_SERVICE_MODE)
-        accWS.Cells(8, 2).value = GetSetting(SET_SERVICE_CONTENT)
-        'accWS.Cells(9, 2).value = GetSetting(SET_DELIVERABLE)
-        accWS.Cells(10, 2).value = GetSetting(SET_MILESTONE)
-        accWS.Cells(11, 2).value = ConvertToDateStr(frmMain.txtPeriod.Text)   'GetSetting(SET_CONTRACT_NO)
-        accWS.Cells(11, 4).value = ConvertToDateStr(frmMain.txtPeriodTo.Text)   'GetSetting(SET_PO)
-        
-        ' Row 15以降：人員別集計データ
+        accWS.Cells(5, 2).Value = GetSetting(SET_PROJECT_NAME)
+        accWS.Cells(6, 2).Value = GetSetting(SET_SUPPLIER)
+        accWS.Cells(7, 2).Value = GetSetting(SET_SERVICE_MODE)
+        accWS.Cells(8, 2).Value = GetSetting(SET_SERVICE_CONTENT)
+        accWS.Cells(10, 2).Value = GetSetting(SET_MILESTONE)
+        accWS.Cells(11, 2).Value = ConvertToDateStr(frmMain.txtPeriod.Text)
+        accWS.Cells(11, 4).Value = ConvertToDateStr(frmMain.txtPeriodTo.Text)
+
         Dim accRow As Long
         accRow = 15
-        Dim idx As Long
-        idx = 1
-        
+
         For Each key In m_summaryData.Keys
             summary = m_summaryData(key)
-            
-            'accWS.Cells(accRow, 1).value = idx
-            accWS.Cells(accRow, 2).value = CStr(summary(COL_PERSON_NAME)) 'Name:
-            accWS.Cells(accRow, 3).value = CStr(summary(COL_LEVEL)) 'level
-            'accWS.Cells(accRow, 4).value = CStr(summary(COL_WORK_CONTENT))
-           ' accWS.Cells(accRow, 6).value = CDbl(summary(COL_MAN_MONTH))
-            accWS.Cells(accRow, 7).Formula = "=Timesheet_" & accWS.Cells(accRow, 2).value & "!I5"
-            accWS.Cells(accRow, 9).value = CDbl(summary(COL_UNIT_PRICE))
-            ' 金額列はテンプレートの計算式に任せる
-            
+            personName = CStr(summary(COL_PERSON_NAME))
+
+            Dim pStart As String, pEnd As String
+            Dim wp As String
+            wp = CStr(summary(COL_WORK_PERIOD))
+            If Len(wp) > 0 Then
+                Dim wpParts() As String
+                wpParts = Split(wp, "-")
+                If UBound(wpParts) >= 1 Then
+                    pStart = Trim(wpParts(0))
+                    pEnd = Trim(wpParts(1))
+                End If
+            End If
+            If Len(pStart) = 0 Then pStart = ConvertToDateStr(frmMain.txtPeriod.Text)
+            If Len(pEnd) = 0 Then pEnd = ConvertToDateStr(frmMain.txtPeriodTo.Text)
+
+            accWS.Cells(accRow, 2).Value = personName
+            accWS.Cells(accRow, 3).Value = CStr(summary(COL_LEVEL))
+            accWS.Cells(accRow, 4).Value = pStart
+            accWS.Cells(accRow, 6).Value = pEnd
+            Dim tsName As String
+            tsName = "Timesheet_" & personName
+            If Len(tsName) > 31 Then tsName = Left(tsName, 31)
+            accWS.Cells(accRow, 7).Formula = "=" & tsName & "!I15"
+            accWS.Cells(accRow, 9).Value = CDbl(summary(COL_UNIT_PRICE))
+            accWS.Cells(accRow, 10).Value = 1
             accRow = accRow + 1
-            idx = idx + 1
+
+            Dim wdOT As Double, weOT As Double
+            wdOT = CDbl(summary(COL_WEEKDAY_OT))
+            weOT = CDbl(summary(COL_WEEKEND_OT))
+            If wdOT + weOT > 0 Then
+                accWS.Cells(accRow, 2).Value = personName
+                accWS.Cells(accRow, 3).Value = CStr(summary(COL_LEVEL))
+                accWS.Cells(accRow, 4).Value = pStart
+                accWS.Cells(accRow, 6).Value = pEnd
+                accWS.Cells(accRow, 8).Value = "1式"
+                accWS.Cells(accRow, 10).Value = 1
+                accWS.Cells(accRow, 11).Value = wdOT * 15 + weOT * 20
+                accRow = accRow + 1
+            End If
         Next key
     End If
-    
+
     wb.Close SaveChanges:=True
     GenerateHSCN = True
 End Function
 
-''' 会社明細を生成する
 Private Function GenerateCompanyReport(ByVal outputPath As String) As Boolean
     Dim templatePath As String
     templatePath = GetSetting(SET_COMPANY_PATH)
-    
+
     If Len(templatePath) = 0 Or Len(Dir(templatePath)) = 0 Then
         MsgBox OUTFILE_MEISAI & "のテンプレートが見つかりません。", vbExclamation
         GenerateCompanyReport = False
         Exit Function
     End If
-    
+
     Dim outputFile As String
-    outputFile = outputPath & "\" & OUTFILE_MEISAI & "_" & Format(Now, "yyyymmddhhmmss ") & ".xlsx"
-    
+    outputFile = outputPath & "\\" & OUTFILE_MEISAI & "_" & Format(Now, "yyyymmddhhmmss") & ".xlsx"
     FileCopy templatePath, outputFile
-    
+
     Dim wb As Workbook
     Set wb = Workbooks.Open(outputFile)
     Dim ws As Worksheet
     Set ws = wb.Worksheets(1)
-    
-    ' Row 2以降に人員別データを埋め込み
+
     Dim dataRow As Long
     dataRow = 2
-    Dim idx As Long
-    idx = 1
-    
+
     Dim key As Variant
     For Each key In m_summaryData.Keys
         Dim summary As Variant
         summary = m_summaryData(key)
-        
-        'ws.Cells(dataRow, 1).value = summary(COL_DAILY_DATA)  '日付
-        ws.Cells(dataRow, 2).value = CStr(summary(COL_WORK_CONTENT))   '作業内容CStr(summary(COL_PERSON_NAME))
-        ws.Cells(dataRow, 3).value = "公共シ" 'CStr(summary(COL_WORK_PERIOD))
-        ws.Cells(dataRow, 4).value = CStr(summary(COL_WORK_CONTENT))  '案件内容
-        ws.Cells(dataRow, 5).value = CDbl(summary(COL_TOTAL_HOURS))
-        ws.Cells(dataRow, 6).value = CStr(summary(COL_PERSON_NAME))  '名前 CDbl(summary(COL_MAN_MONTH))
-        ws.Cells(dataRow, 7).value = CDbl(summary(COL_UNIT_PRICE)) '単価　CStr(summary(COL_LEVEL))
-        'ws.Cells(dataRow, 8).value = CDbl(summary(COL_UNIT_PRICE))
-        
+
+        Dim workPeriod As String
+        workPeriod = CStr(summary(COL_WORK_PERIOD))
+        If Len(workPeriod) = 0 Then
+            workPeriod = ConvertToDateStr(frmMain.txtPeriod.Text) & "~" & ConvertToDateStr(frmMain.txtPeriodTo.Text)
+        End If
+        ws.Cells(dataRow, 1).Value = workPeriod
+
+        Dim workContent As String
+        workContent = CStr(summary(COL_WORK_CONTENT))
+        If Len(workContent) = 0 Then workContent = GetSetting(SET_SERVICE_CONTENT)
+        ws.Cells(dataRow, 2).Value = workContent
+
+        ws.Cells(dataRow, 3).Value = ""
+
+        ws.Cells(dataRow, 4).Value = GetCaseNameByWorkNo(CStr(summary(COL_WORK_NO)))
+
+        ws.Cells(dataRow, 5).Value = ""
+
+        ws.Cells(dataRow, 6).Value = CStr(summary(COL_PERSON_NAME))
+
+        ws.Cells(dataRow, 7).Value = CDbl(summary(COL_UNIT_PRICE))
+
+        ws.Cells(dataRow, 8).Value = CDbl(summary(COL_TOTAL_HOURS))
+
         dataRow = dataRow + 1
-        idx = idx + 1
     Next key
-    
+
     wb.Close SaveChanges:=True
     GenerateCompanyReport = True
 End Function
 
-''' 発注書を生成する
 Private Function GenerateOrderReport(ByVal outputPath As String) As Boolean
     Dim templatePath As String
     templatePath = GetSetting(SET_ORDER_PATH)
-    
+
     If Len(templatePath) = 0 Or Len(Dir(templatePath)) = 0 Then
         MsgBox OUTFILE_HSCN_PO & "のテンプレートが見つかりません。", vbExclamation
         GenerateOrderReport = False
         Exit Function
     End If
-    
+
     Dim outputFile As String
-    outputFile = outputPath & "\" & OUTFILE_HSCN_PO & "_" & Format(Now, "yyyymmddhhmmss ") & ".xls"
-    
+    outputFile = outputPath & "\\" & OUTFILE_HSCN_PO & "_" & Format(Now, "yyyymmddhhmmss") & ".xlsx"
     FileCopy templatePath, outputFile
-    
+
     Dim wb As Workbook
     Set wb = Workbooks.Open(outputFile)
     Dim ws As Worksheet
     Set ws = wb.Worksheets(1)
-    
-    ' Row 14以降（表一）に人員別データを埋め込み
+
     Dim dataRow As Long
-    dataRow = 14
-    Dim idx As Long
-    idx = 1
-    
+    dataRow = 13
+
     Dim key As Variant
     For Each key In m_summaryData.Keys
         Dim summary As Variant
         summary = m_summaryData(key)
-        
-        ws.Cells(dataRow, 1).value = idx
-        ws.Cells(dataRow, 2).value = CStr(summary(COL_PERSON_NAME))
-        ws.Cells(dataRow, 3).value = CStr(summary(COL_WORK_PERIOD))
-        ws.Cells(dataRow, 4).value = CStr(summary(COL_WORK_CONTENT))
-        ws.Cells(dataRow, 5).value = CDbl(summary(COL_TOTAL_HOURS))
-        ws.Cells(dataRow, 6).value = CDbl(summary(COL_MAN_MONTH))
-        ws.Cells(dataRow, 7).value = CStr(summary(COL_LEVEL))
-        ws.Cells(dataRow, 8).value = CDbl(summary(COL_UNIT_PRICE))
-        
+
+        ws.Cells(dataRow, 2).Value = GetCaseNameByWorkNo(CStr(summary(COL_WORK_NO)))
+
+        ws.Cells(dataRow, 6).Value = CDbl(summary(COL_TOTAL_HOURS))
+
+        ws.Cells(dataRow, 7).Value = CDbl(summary(COL_UNIT_PRICE))
+
+        ws.Cells(dataRow, 9).Value = "要員"
+
+        ws.Cells(dataRow, 14).Value = CStr(summary(COL_PERSON_NAME))
+
+        ws.Cells(dataRow, 15).Value = CStr(summary(COL_WORK_NO))
+
         dataRow = dataRow + 1
-        idx = idx + 1
     Next key
-    
+
     wb.Close SaveChanges:=True
     GenerateOrderReport = True
 End Function
-
