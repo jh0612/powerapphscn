@@ -477,7 +477,7 @@ Private Function GenerateHSCN(ByVal outputPath As String) As Boolean
     End If
 
     Dim outputFile As String
-    outputFile = outputPath & "\\" & OUTFILE_HSCN_ACCEPTANCE_REPORT & "_" & Format(Now, "yyyymmddhhmmss") & ".xlsx"
+    outputFile = outputPath & "\" & OUTFILE_HSCN_ACCEPTANCE_REPORT & "_" & Format(Now, "yyyymmddhhmmss") & ".xlsx"
     FileCopy templatePath, outputFile
 
     Dim wb As Workbook
@@ -542,7 +542,7 @@ Private Function GenerateHSCN(ByVal outputPath As String) As Boolean
 
                     Dim stdH As Double
                     Dim isWE As Boolean
-                    isWE = CDbl(dayInfo(6)) > 0 And CDbl(dayInfo(5)) = 0 And CDbl(dayInfo(3)) > 0
+                    isWE = CDbl(dayInfo(6)) > 0
                     If isWE Then
                         stdH = 0#
                     Else
@@ -637,7 +637,7 @@ Private Function GenerateCompanyReport(ByVal outputPath As String) As Boolean
     End If
 
     Dim outputFile As String
-    outputFile = outputPath & "\\" & OUTFILE_MEISAI & "_" & Format(Now, "yyyymmddhhmmss") & ".xlsx"
+    outputFile = outputPath & "\" & OUTFILE_MEISAI & "_" & Format(Now, "yyyymmddhhmmss") & ".xlsx"
     FileCopy templatePath, outputFile
 
     Dim wb As Workbook
@@ -695,7 +695,7 @@ Private Function GenerateOrderReport(ByVal outputPath As String) As Boolean
     End If
 
     Dim outputFile As String
-    outputFile = outputPath & "\\" & OUTFILE_HSCN_PO & "_" & Format(Now, "yyyymmddhhmmss") & ".xlsx"
+    outputFile = outputPath & "\" & OUTFILE_HSCN_PO & "_" & Format(Now, "yyyymmddhhmmss") & ".xlsx"
     FileCopy templatePath, outputFile
 
     Dim wb As Workbook

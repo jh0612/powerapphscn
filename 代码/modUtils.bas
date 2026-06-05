@@ -484,27 +484,33 @@ Function GetWorkContentByDate( _
                     Dim eY As Long, eM As Long, eD As Long
                     sParts = Split(Trim(dateParts(0)), "/")
                     eParts = Split(Trim(dateParts(1)), "/")
+                    Dim parsedOK As Boolean
+                    parsedOK = True
                     If UBound(sParts) >= 2 Then
                         sY = CLng(sParts(0)) : sM = CLng(sParts(1)) : sD = CLng(sParts(2))
                     ElseIf UBound(sParts) = 1 Then
                         sY = targetY : sM = CLng(sParts(0)) : sD = CLng(sParts(1))
                     Else
-                        GoTo NextLine
+                        parsedOK = False
                     End If
-                    If UBound(eParts) >= 2 Then
-                        eY = CLng(eParts(0)) : eM = CLng(eParts(1)) : eD = CLng(eParts(2))
-                    ElseIf UBound(eParts) = 1 Then
-                        eY = targetY : eM = CLng(eParts(0)) : eD = CLng(eParts(1))
-                    Else
-                        GoTo NextLine
+                    If parsedOK Then
+                        If UBound(eParts) >= 2 Then
+                            eY = CLng(eParts(0)) : eM = CLng(eParts(1)) : eD = CLng(eParts(2))
+                        ElseIf UBound(eParts) = 1 Then
+                            eY = targetY : eM = CLng(eParts(0)) : eD = CLng(eParts(1))
+                        Else
+                            parsedOK = False
+                        End If
                     End If
-                    startDate = DateSerial(sY, sM, sD)
-                    endDate = DateSerial(eY, eM, eD)
-                    
-                    ' 日付が範囲内の場合、作業内容を返す
-                    If currentDate >= startDate And currentDate <= endDate Then
-                        GetWorkContentByDate = Trim(fields(2))
-                        Exit Function
+                    If parsedOK Then
+                        startDate = DateSerial(sY, sM, sD)
+                        endDate = DateSerial(eY, eM, eD)
+                        
+                        ' 日付が範囲内の場合、作業内容を返す
+                        If currentDate >= startDate And currentDate <= endDate Then
+                            GetWorkContentByDate = Trim(fields(2))
+                            Exit Function
+                        End If
                     End If
                 End If
             End If
