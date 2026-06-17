@@ -538,8 +538,6 @@ Private Function GenerateHSCN(ByVal outputPath As String) As Boolean
                     Dim dateM As Long, dateD As Long
                     dateM = CLng(Mid(dateStr, 5, 2))
                     dateD = CLng(Right(dateStr, 2))
-                    newWS.Cells(rowIdx, 1).Value = dateM
-                    newWS.Cells(rowIdx, 2).Value = dateD
 
                     Dim dateY As Long
                     dateY = CLng(Left(dateStr, 4))
